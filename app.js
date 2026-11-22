@@ -247,6 +247,67 @@ const skyMaterial = createAtmosphericSky();
 // ============================================================================
 // 2. Five-Stage Coherent Parametric Bird Generators (鯤鵬001 ~ 鯤鵬005)
 // ============================================================================
+// Smooth cubic-Hermite profile through [x, y] control points (sorted by x)
+function makeProfile(pts) {
+  const n = pts.length;
+  return (x) => {
+    if (x <= pts[0][0]) return pts[0][1];
+    if (x >= pts[n - 1][0]) return pts[n - 1][1];
+    let i = 0;
+    while (x > pts[i + 1][0]) i++;
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(n - 1, i + 2)];
+    const w = p2[0] - p1[0];
+    const t = (x - p1[0]) / w;
+    const m1 = ((p2[1] - p0[1]) / (p2[0] - p0[0])) * w;
+    const m2 = ((p3[1] - p1[1]) / (p3[0] - p1[0])) * w;
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return (2 * t3 - 3 * t2 + 1) * p1[1] + (t3 - 2 * t2 + t) * m1
+      + (-2 * t3 + 3 * t2) * p2[1] + (t3 - t2) * m2;
+  };
+}
+
+// Stage-1 whale silhouette traced from 鯤鵬001.png, shifted up by Y_OFF so the
+// whale floats above the bottom control bar while keeping the photo's proportions.
+const KUN1 = (() => {
+  const Y_OFF = 4.6;
+  const lift = (arr) => arr.map(([x, y]) => [x, y + Y_OFF]);
+  const top = makeProfile(lift([
+    [-24.2, -2.95], [-21.0, -2.35], [-16.0, -2.05], [-8.0, -1.9], [0.0, -1.95],
+    [7.0, -2.2], [12.0, -2.65], [16.0, -3.4], [20.0, -4.2], [25.0, -4.55],
+    [31.0, -4.35], [37.0, -4.25]
+  ]));
+  const bot = makeProfile(lift([
+    [-24.2, -3.05], [-22.0, -4.6], [-19.8, -6.1], [-16.0, -7.85], [-12.0, -9.2],
+    [-6.0, -10.3], [-2.0, -10.7], [3.0, -10.6], [8.0, -9.95], [13.0, -8.6],
+    [17.0, -7.3], [21.0, -6.4], [26.0, -5.75], [31.0, -5.3], [37.0, -4.7]
+  ]));
+  const X0 = -24.2;
+  const X1 = 37.0;
+  const BINS = 512;
+  const cdf = new Float32Array(BINS + 1);
+  for (let b = 0; b < BINS; b++) {
+    const x = X0 + ((b + 0.5) / BINS) * (X1 - X0);
+    cdf[b + 1] = cdf[b] + Math.pow(Math.max(0.05, top(x) - bot(x)), 0.8);
+  }
+  const total = cdf[BINS];
+  const invCdf = (u) => {
+    const target = Math.min(0.99999, Math.max(0, u)) * total;
+    let lo = 0;
+    let hi = BINS;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (cdf[mid] <= target) lo = mid; else hi = mid;
+    }
+    const f = (target - cdf[lo]) / Math.max(1e-6, cdf[lo + 1] - cdf[lo]);
+    return X0 + ((lo + f) / BINS) * (X1 - X0);
+  };
+  return { top, bot, invCdf };
+})();
+
 /**
  * To ensure the transformation from 001 -> 002 -> 003 -> 004 -> 005 is completely
  * coherent and organic (no chaotic scrambling), each bird `i` is assigned normalized
@@ -296,61 +357,49 @@ function buildFiveStageGeometry(count) {
 
     // ========================================================================
     // KEYFRAME 1: 鯤鵬001.png (Center X = 0.0)
-    // Full Kun Whale hovering above sea horizon, viewing pavilion at bottom-right
+    // Full Kun Whale hovering above sea horizon, viewing pavilion at bottom-right.
+    // Silhouette = continuous spline profiles traced from the reference photo
+    // (sharp snout → deep rounded belly → long tapering peduncle → tail tip).
     // ========================================================================
     let x1, y1, z1, roleWeight = 0.35;
 
     if (isScout1) {
       // Tiny lone bird above the whale's mid-back in 鯤鵬001
-      x1 = -3.2; y1 = 5.5; z1 = 2.0; roleWeight = 0.02;
+      x1 = -5.5; y1 = 6.2; z1 = 2.0; roleWeight = 0.02;
     } else if (isScout2) {
       // Second lone bird tucked into body in 001, emerges in 005
-      x1 = -10.0; y1 = 0.5; z1 = 0.0; roleWeight = 0.02;
-    } else if (rGroup < 0.85) {
-      // Main Whale Body (u < 0.63) & Rightward Tail Fluke Stream (u >= 0.63)
-      const u = (Math.random() < 0.78) ? (uBase * 0.63) : (0.63 + uBase * 0.37);
-      x1 = -25.2 + u * 58.7; // -25.2 .. +33.5
-
-      let topY, botY, halfZ;
-      if (u <= 0.63) {
-        const s = u / 0.63;
-        const dorsalArch = Math.sin(Math.pow(s, 0.75) * Math.PI) * 1.15;
-        const rearDrop = Math.pow(Math.max(0, (s - 0.50) / 0.50), 1.55) * 3.1;
-        topY = 0.75 + dorsalArch - rearDrop;
-
-        const chinAndBelly = Math.pow(Math.sin(Math.pow(s, 0.68) * Math.PI), 0.78);
-        const baseLine = 0.75 * (1.0 - Math.pow(s, 0.65)) + (-3.85) * Math.pow(s, 0.65);
-        botY = baseLine - 4.45 * chinAndBelly;
-        halfZ = 0.25 + 6.2 * Math.sin(Math.pow(s, 0.68) * Math.PI);
-      } else {
-        const t = (u - 0.63) / 0.37;
-        const centerLineY = -3.02 + Math.pow(t, 0.88) * 3.35;
-        const halfH = 0.88 * (1.0 - t * 0.58) + Math.sin(t * Math.PI) * 0.25;
-        topY = centerLineY + halfH;
-        botY = centerLineY - halfH;
-        halfZ = 1.1 + t * 3.2;
-      }
+      x1 = -10.0; y1 = -1.0; z1 = 0.0; roleWeight = 0.02;
+    } else if (rGroup < 0.87) {
+      // Main body: x distributed by inverse-CDF of local body height so the
+      // flock density stays visually continuous from snout to tail tip.
+      x1 = KUN1.invCdf(uBase);
+      const topY = KUN1.top(x1);
+      const botY = KUN1.bot(x1);
+      const h = topY - botY;
 
       const striation = Math.sin(x1 * 0.58 + vBase * 4.2) * 0.16 * (1.0 - Math.pow(2.0 * vBase - 1.0, 2));
-      y1 = botY + vBase * (topY - botY) + striation;
-      z1 = zRand * halfZ * Math.sqrt(1.0 - Math.pow(vBase * 2.0 - 1.0, 2) * 0.65);
-      roleWeight = (u > 0.80) ? (0.62 + (u - 0.80) * 1.8) : (rEdge * 0.70);
+      y1 = botY + vBase * h + striation;
+      const halfZ = 0.35 + h * 0.62;
+      z1 = zRand * halfZ * Math.sqrt(Math.max(0.0, 1.0 - Math.pow(vBase * 2.0 - 1.0, 2) * 0.7));
+      roleWeight = (x1 > 18.0)
+        ? Math.min(0.95, 0.5 + (x1 - 18.0) / 19.0 * 0.4)
+        : (rEdge * 0.70);
     } else {
-      // Organic dorsal & tail fin plumes in 鯤鵬001
+      // Organic dorsal mist & lower tail-fluke wisp in 鯤鵬001
       const t = uBase;
       const bell = Math.sin(t * Math.PI);
       if (i % 3 !== 0) {
-        // Upper rear dorsal mist plume
-        x1 = -1.5 + t * 13.5;
-        y1 = 1.25 - Math.pow(t, 1.25) * 2.15 + Math.sin(t * Math.PI) * 0.35 + gauss * (0.45 + 0.55 * bell);
-        z1 = zRand * 1.9 * bell;
-        roleWeight = 0.72 + (1.0 - bell) * 0.25;
+        // Faint mist haze rising softly off the rear dorsal ridge (attached, not a separate streak)
+        x1 = 3.0 + t * 15.0 + gauss * 0.8;
+        y1 = KUN1.top(x1) - 0.25 + Math.abs(gauss) * (0.5 + 0.9 * bell) + bell * 0.2;
+        z1 = zRand * 2.4 * bell;
+        roleWeight = 0.78 + (1.0 - bell) * 0.2;
       } else {
-        // Lower bifurcated tail fin wisp
-        x1 = 19.0 + t * 9.5;
-        y1 = -2.25 + t * 1.15 - Math.sin(t * Math.PI) * 0.28 + gauss * (0.35 + 0.45 * bell);
+        // Small soft lower fluke lobe beneath the tail
+        x1 = 25.0 + t * 5.5;
+        y1 = KUN1.bot(x1) - 0.35 - bell * 0.6 + gauss * (0.35 + 0.4 * bell);
         z1 = zRand * 1.4 * bell;
-        roleWeight = 0.75 + (1.0 - bell) * 0.22;
+        roleWeight = 0.75 + (1.0 - bell) * 0.2;
       }
     }
 
@@ -439,7 +488,7 @@ function buildFiveStageGeometry(count) {
       if (s < 0.52) {
         const k = s / 0.52;
         lowerEdgeY = -2.1 - Math.pow(k, 0.85) * 4.3 + Math.sin(k * Math.PI * 2.0) * 0.25;
-        ribbonThickness = 1.8 * Math.sin(Math.pow(k, 0.55) * Math.PI) + 0.55;
+        ribbonThickness = 1.8 * Math.sin(Math.pow(k, 0.55) * Math.PI) + 0.55 + 1.1 * k * k;
       } else {
         const k = (s - 0.52) / 0.48;
         lowerEdgeY = -6.4 + Math.sin(k * Math.PI * 2.2) * 0.55 + k * 0.35;
@@ -452,12 +501,17 @@ function buildFiveStageGeometry(count) {
       z3 = zRand * (0.8 + ribbonThickness * 1.6);
     } else {
       const t = uBase;
-      const lx = -27.5 + t * 36.0;
-      const domeTop = -0.2 - Math.pow(t, 1.4) * 1.8 + Math.sin(t * Math.PI) * 0.6;
-      const domeBot = -2.2 - t * 3.2;
+      const lx = -27.5 + t * 42.0;
+      // Ride on top of the ribbon's lower edge and taper smoothly to nothing on the right
+      const sR = (lx + 30.5) / 70.0;
+      const kR = Math.min(1.0, sR / 0.52);
+      const ribbonLower = -2.1 - Math.pow(kR, 0.85) * 4.3 + Math.sin(kR * Math.PI * 2.0) * 0.25;
+      const taper = Math.pow(1.0 - t, 0.9);
+      const domeBot = ribbonLower + 0.4;
+      const domeTop = domeBot + 0.3 + (1.4 + Math.sin(t * Math.PI) * 1.2) * taper;
       x3 = cx3 + lx;
-      y3 = domeBot + vBase * (domeTop - domeBot) + gauss * 0.35;
-      z3 = zRand * 3.5;
+      y3 = domeBot + vBase * (domeTop - domeBot) + gauss * 0.35 * taper;
+      z3 = zRand * (1.0 + 2.5 * taper);
     }
 
     pos3[i3]     = x3;
@@ -824,17 +878,19 @@ function createDocumentaryForeground() {
     texCanvas.height = 256;
     const ctx = texCanvas.getContext('2d');
 
-    ctx.fillStyle = '#3a3734';
+    // Weathered asphalt-shingle palette sampled from the pavilion roof in 鯤鵬001
+    ctx.fillStyle = '#4a433d';
     ctx.fillRect(0, 0, 256, 256);
 
     for (let y = 0; y < 256; y += 8) {
-      ctx.fillStyle = (y % 16 === 0) ? '#292522' : '#4a4845';
-      ctx.fillRect(0, y, 256, 3);
-      for (let k = 0; k < 18; k++) {
+      ctx.fillStyle = (y % 16 === 0) ? '#2c2622' : '#3d3631';
+      ctx.fillRect(0, y, 256, 2);
+      for (let k = 0; k < 22; k++) {
         const rx = Math.random() * 256;
-        const rw = 6 + Math.random() * 18;
-        ctx.fillStyle = Math.random() > 0.45 ? '#6e7b85' : '#231f1c';
-        ctx.fillRect(rx, y + 1, rw, 5);
+        const rw = 4 + Math.random() * 12;
+        const r = Math.random();
+        ctx.fillStyle = r > 0.66 ? '#7a736b' : (r > 0.33 ? '#5c5249' : '#2a2420');
+        ctx.fillRect(rx, y + 2, rw, 5);
       }
     }
 
@@ -852,13 +908,26 @@ function createDocumentaryForeground() {
   pavilion.position.set(18.6, -7.85, 40.0);
   pavilion.scale.setScalar(1.08);
 
+  // Red-brown timber (posts, railing) as seen in 鯤鵬001
+  const timberMat = new THREE.MeshBasicMaterial({ color: 0x4b2a22 });
+
   const deckBase = new THREE.Mesh(new THREE.BoxGeometry(6.2, 1.8, 4.2), darkWoodMat);
-  deckBase.position.y = -1.65;
+  deckBase.position.y = -1.95;
   pavilion.add(deckBase);
+
+  // Railing: top rail + balusters in front of the crowd
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.12, 0.12), timberMat);
+  rail.position.set(0, -0.55, 1.62);
+  pavilion.add(rail);
+  for (let bx = -3.0; bx <= 3.0; bx += 0.3) {
+    const baluster = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.55, 0.06), timberMat);
+    baluster.position.set(bx, -0.83, 1.62);
+    pavilion.add(baluster);
+  }
 
   const colX = [-2.4, -1.05, 0.35, 1.75];
   colX.forEach((cx) => {
-    const col = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.85, 0.24), darkWoodMat);
+    const col = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.85, 0.24), timberMat);
     col.position.set(cx, 0.05, 1.4);
     pavilion.add(col);
   });
@@ -885,7 +954,7 @@ function createDocumentaryForeground() {
     pavilion.add(head);
   });
 
-  const eaveBeam = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.24, 4.8), darkWoodMat);
+  const eaveBeam = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.24, 4.8), timberMat);
   eaveBeam.position.y = 0.92;
   pavilion.add(eaveBeam);
 
@@ -1170,6 +1239,8 @@ const ui = {
   stageTabs: Array.from(document.querySelectorAll('.stage-tab')),
   verseColumns: Array.from(document.querySelectorAll('.verse-column')),
   verseCaption: document.getElementById('verse-caption'),
+  subtitleVerse: document.getElementById('subtitle-verse'),
+  subtitleBox: document.getElementById('verse-subtitle'),
   stageLabelShort: document.getElementById('stage-label-short'),
   particleReadout: document.getElementById('particle-count-readout'),
   sliderTurbulence: document.getElementById('slider-turbulence'),
@@ -1204,6 +1275,13 @@ function updateStageUI(t) {
 
     ui.stageLabelShort.textContent = stageData.shortTitle;
     ui.verseCaption.textContent = stageData.caption;
+    if (ui.subtitleVerse) {
+      ui.subtitleVerse.textContent = stageData.verse;
+      // Restart the CSS fade-in so each verse "inks" onto the sky
+      ui.subtitleBox.classList.remove('reveal');
+      void ui.subtitleBox.offsetWidth;
+      ui.subtitleBox.classList.add('reveal');
+    }
 
     ui.stageTabs.forEach((tab, idx) => {
       const active = idx === stageIdx;

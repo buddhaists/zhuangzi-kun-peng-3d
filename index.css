@@ -225,13 +225,14 @@ html, body {
    ========================================================================== */
 #poetry-panel {
   position: absolute;
-  top: 78px;
-  left: 24px;
+  top: 84px;
+  right: 24px;
   z-index: 8;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 310px;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 260px;
   pointer-events: auto;
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
@@ -301,27 +302,65 @@ html, body {
 
 .verse-text {
   font-family: var(--font-serif);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.16em;
-  line-height: 1.4;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
   color: #f5f9fd;
   text-shadow: 0 1px 6px rgba(10, 18, 28, 0.55);
 }
 
+/* ==========================================================================
+   Centered Cinematic Subtitle (active verse inked onto the upper sky)
+   ========================================================================== */
+#verse-subtitle {
+  position: absolute;
+  top: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(620px, 56vw);
+  z-index: 7;
+  text-align: center;
+  pointer-events: none;
+}
+
+.subtitle-verse {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: #16263a;
+  text-shadow: 0 0 18px rgba(235, 244, 252, 0.75), 0 1px 0 rgba(255, 255, 255, 0.35);
+  margin: 0 0 8px;
+}
+
 .verse-annotation {
   font-family: var(--font-serif);
-  font-size: 12px;
-  line-height: 1.55;
+  font-size: 12.5px;
+  line-height: 1.6;
   letter-spacing: 0.06em;
-  color: #eef5fc;
-  background: rgba(18, 28, 40, 0.36);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border-left: 3px solid rgba(205, 228, 250, 0.65);
-  padding: 8px 12px;
-  border-radius: 0 6px 6px 0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  color: rgba(22, 38, 56, 0.86);
+  text-shadow: 0 0 10px rgba(235, 244, 252, 0.8);
+  margin: 0;
+}
+
+#verse-subtitle.reveal .subtitle-verse {
+  animation: inkReveal 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#verse-subtitle.reveal .verse-annotation {
+  animation: inkReveal 1.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes inkReveal {
+  from { opacity: 0; filter: blur(6px); letter-spacing: 0.5em; }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+body.ui-collapsed #verse-subtitle .verse-annotation,
+body.ui-collapsed #poetry-panel {
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 /* ==========================================================================
@@ -569,12 +608,10 @@ body.ui-collapsed #top-bar:hover #btn-audio-toggle {
     display: none;
   }
   #poetry-panel {
-    top: 76px;
-    left: 18px;
-    max-width: 340px;
+    display: none;
   }
-  .verse-text {
-    font-size: 15px;
+  #verse-subtitle {
+    width: 70vw;
   }
 }
 

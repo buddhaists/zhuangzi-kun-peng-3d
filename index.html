@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>《莊子‧逍遙遊》北冥有魚 — 鯤鵬化雲 WebGL 3D 群鳥動態藝術</title>
   <meta name="description" content="以 Three.js 與 WebGL Custom Shaders 演繹《莊子‧逍遙遊》「北冥有魚，其名為鯤；化而為鳥，其名為鵬；怒而飛，其翼若垂天之雲」的八萬飛鳥聚散（Murmuration）3D 視覺體驗。" />
+  <link rel="icon" href="data:," />
   <link rel="stylesheet" href="./index.css" />
   <script type="importmap">
     {
@@ -98,10 +99,15 @@
           <span class="verse-text">怒而飛，其翼若垂天之雲。</span>
         </li>
       </ol>
-      <div id="verse-caption" class="verse-annotation">
-        遠海涼亭外，數萬飛鳥於灰藍冷冽天幕中凝聚成巨鯤之形，貼近海平線緩緩潛游。
-      </div>
     </aside>
+
+    <!-- Cinematic centered subtitle: active verse + scene annotation (upper sky, clear of the flock) -->
+    <section id="verse-subtitle" aria-live="polite">
+      <p id="subtitle-verse" class="subtitle-verse">北冥有魚，其名爲鯤。</p>
+      <p id="verse-caption" class="verse-annotation">
+        遠海涼亭外，數萬飛鳥於灰藍冷冽天幕中凝聚成巨鯤之形，貼近海平線緩緩潛游。
+      </p>
+    </section>
 
     <!-- Bottom Interactive Director Control Bar -->
     <footer id="director-bar" aria-label="五幕敘事時間軸與粒子流體控制">
