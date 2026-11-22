@@ -1,88 +1,88 @@
 /**
- * 《莊子‧逍遙遊》「北冥有魚」— Three.js & WebGL Custom Shader Murmuration Engine
+ * 《莊子‧逍遙遊》「北冥有魚」— Three.js & WebGL Five-Keyframe Sequential Murmuration Engine
  *
- * Faithfully reconstructs the 5 documentary reference frames:
- * - Frame 1 (Act 1): Colossal Kun whale murmuration hovering in the center-left sky,
- *   crisp dark dorsal ridge & sweeping rounded belly, bifurcated tail stream to the right,
- *   and the coastal viewing pavilion cropped at the bottom-right edge with distant misty sea horizon.
- * - Frame 2 & 3 (Act 2): Telephoto view of the elongated Kun whale with internal diagonal density
- *   striations, sharp pointed snout on the left, and trailing mist.
- * - Frame 4 & 5 (Act 4-5): Colossal Peng bird with razor-sharp wingtip reaching far upper-left,
- *   massive layered wing-body sweeping down to the lower-right, and open-field utility poles
- *   with an osprey nest and perched birds on the sagging wires at the bottom-right.
+ * Strictly interpolates across the 5 exact morphological stages corresponding to:
+ * - 鯤鵬001.png (Stage 0 / t = 0.00): 壹 · 北冥有魚，其名爲鯤 (Full Kun whale + right viewing pavilion)
+ * - 鯤鵬002.png (Stage 1 / t = 0.25): 貳 · 鯤之大，不知其幾千里也 (Elongated Kun close-up + diagonal striations, no foreground)
+ * - 鯤鵬003.png (Stage 2 / t = 0.50): 叁 · 化而爲鳥，其名爲鵬 (Flattening ribbon wing-stream + faint upper ghost mist + tiny bottom treetops)
+ * - 鯤鵬004.png (Stage 3 / t = 0.75): 肆 · 鵬之背，不知其幾千里也 (Colossal sweeping Peng wing + deep descending belly + utility poles & nest)
+ * - 鯤鵬005.png (Stage 4 / t = 1.00): 伍 · 怒而飛，其翼若垂天之雲 (Three-tiered hanging cloud-wings + receding utility poles & perched birds)
  */
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // ============================================================================
-// Five Narrative Acts of 《莊子‧逍遙遊》
+// Five Narrative Keyframes (1:1 Mapped to 鯤鵬001.png ~ 鯤鵬005.png)
 // ============================================================================
 const NARRATIVE_STAGES = [
   {
     id: 0,
-    shortTitle: '壹 · 北冥潛鯤',
+    refImage: '鯤鵬001.png',
+    shortTitle: '壹 · 北冥潛鯤 (001)',
     verse: '北冥有魚，其名爲鯤。',
-    caption: '遠海觀景涼亭外，十萬飛鳥於灰藍天幕中凝聚成巨鯤之形：背脊深邃平緩、魚腹飽滿圓潤、尾翼流線延展，懸浮於海天之間。',
-    tRange: [0.0, 0.22],
-    targetT: 0.05,
+    caption: '【對應 鯤鵬001】遠海觀景涼亭外，十萬飛鳥凝聚成巨鯤之形：背脊深邃平緩、魚腹飽滿圓潤、尾翼流線延展，懸浮於海天之間。',
+    targetT: 0.00,
     camPos: new THREE.Vector3(0.0, 0.0, 82.0),
     camLookAt: new THREE.Vector3(0.0, 0.0, 0.0)
   },
   {
     id: 1,
-    shortTitle: '貳 · 幾千里也',
+    refImage: '鯤鵬002.png',
+    shortTitle: '貳 · 幾千里也 (002)',
     verse: '鯤之大，不知其幾千里也。',
-    caption: '長焦鏡頭推進特寫，巨鯤修長身軀橫貫蒼穹，銳利魚吻刺破冷風，內部鳥群如海流般呈斜向波紋層層翻湧。',
-    tRange: [0.22, 0.42],
-    targetT: 0.30,
-    camPos: new THREE.Vector3(-4.5, 0.8, 66.0),
-    camLookAt: new THREE.Vector3(-4.5, 0.8, 0.0)
+    caption: '【對應 鯤鵬002】長焦推進特寫，巨鯤修長身軀橫貫畫面，左側銳利魚吻刺破冷風，內部鳥群如海流般呈斜向波紋層層延展。',
+    targetT: 0.25,
+    camPos: new THREE.Vector3(60.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(60.0, 0.0, 0.0)
   },
   {
     id: 2,
-    shortTitle: '叁 · 化而爲鳥',
+    refImage: '鯤鵬003.png',
+    shortTitle: '叁 · 化而爲鳥 (003)',
     verse: '化而爲鳥，其名爲鵬。',
-    caption: '氣流翻湧旋捲，巨鯤修長的身軀在空中劇烈重組，前端延伸為修長銳利的巨翼前緣，腹尾舒展為層疊羽翼。',
-    tRange: [0.42, 0.62],
-    targetT: 0.52,
-    camPos: new THREE.Vector3(18.0, 0.4, 80.0),
-    camLookAt: new THREE.Vector3(18.0, 0.4, 0.0)
+    caption: '【對應 鯤鵬003】巨鯤腹尾收束壓平，轉化為一道橫跨天際的流線型波浪翼帶，下緣凝集如墨，上方散逸出淡雅羽霧，底部隱現遠方林梢。',
+    targetT: 0.50,
+    camPos: new THREE.Vector3(120.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(120.0, 0.0, 0.0)
   },
   {
     id: 3,
-    shortTitle: '肆 · 鵬之背',
+    refImage: '鯤鵬004.png',
+    shortTitle: '肆 · 鵬之背 (004)',
     verse: '鵬之背，不知其幾千里也；',
-    caption: '鏡頭隨大鵬橫移至曠野電線桿與鳥巢上方，大鵬左翼尖直指蒼穹，厚重寬廣的身軀與下方電線桿上渺小的停棲鳥群形成震撼對比。',
-    tRange: [0.62, 0.82],
-    targetT: 0.72,
-    camPos: new THREE.Vector3(42.0, 0.0, 82.0),
-    camLookAt: new THREE.Vector3(42.0, 0.0, 0.0)
+    caption: '【對應 鯤鵬004】大鵬左翼尖直刺左方天際，寬廣厚重的鵬背與腹部向右下電線桿與鳥巢上方傾瀉而下，氣勢遮天蔽日。',
+    targetT: 0.75,
+    camPos: new THREE.Vector3(180.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(180.0, 0.0, 0.0)
   },
   {
     id: 4,
-    shortTitle: '伍 · 垂天之雲',
+    refImage: '鯤鵬005.png',
+    shortTitle: '伍 · 垂天之雲 (005)',
     verse: '怒而飛，其翼若垂天之雲。',
-    caption: '大鵬乘風怒飛，橫跨千里的巨翼在狂風中分化為三層階梯狀的濃密雲翼，尾羽煙消雲散，與北冥天際融為一體。',
-    tRange: [0.82, 1.0],
-    targetT: 0.92,
-    camPos: new THREE.Vector3(46.0, 0.0, 84.0),
-    camLookAt: new THREE.Vector3(46.0, 0.0, 0.0)
+    caption: '【對應 鯤鵬005】大鵬乘風怒飛，長達千里的巨翼向右上揚起，下方分化為三層階梯狀的垂天雲翼，與成排電線桿上渺小的停棲鳥群相映。',
+    targetT: 1.00,
+    camPos: new THREE.Vector3(240.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(240.0, 0.0, 0.0)
   }
 ];
 
 const CAMERA_PRESETS = {
   pavilion: {
     pos: new THREE.Vector3(0.0, 0.0, 82.0),
-    target: new THREE.Vector3(0.0, 0.0, 0.0)
+    target: new THREE.Vector3(0.0, 0.0, 0.0),
+    snapT: 0.00
   },
   telephoto: {
-    pos: new THREE.Vector3(-5.0, 0.8, 65.0),
-    target: new THREE.Vector3(-5.0, 0.8, 0.0)
+    pos: new THREE.Vector3(60.0, 0.0, 82.0),
+    target: new THREE.Vector3(60.0, 0.0, 0.0),
+    snapT: 0.25
   },
   poles: {
-    pos: new THREE.Vector3(45.0, 0.0, 83.0),
-    target: new THREE.Vector3(45.0, 0.0, 0.0)
+    pos: new THREE.Vector3(240.0, 0.0, 82.0),
+    target: new THREE.Vector3(240.0, 0.0, 0.0),
+    snapT: 1.00
   }
 };
 
@@ -92,15 +92,16 @@ const CAMERA_PRESETS = {
 const TOTAL_BIRDS = 110000;
 
 const state = {
-  timeline: 0.04,         // Starts right at Act 1 (Screenshot 1 Kun Whale)
+  timeline: 0.00,         // Starts strictly at Stage 0 (鯤鵬001.png)
   targetTimeline: null,
   isPlaying: true,
-  playSpeed: 0.018,       // Smooth ~55 second cycle so Act 1 stays clearly visible on load
+  playSpeed: 0.022,       // Smoothly progresses 0.00 -> 0.25 -> 0.50 -> 0.75 -> 1.00
+  pauseTimer: 1.8,        // Brief pause on 鯤鵬001 at start so user sees exact 001 frame immediately
   turbulence: 1.0,
   densityRatio: 1.0,
   windSpeed: 1.0,
   cameraMode: 'narrative',
-  activeStageIndex: 0,
+  activeStageIndex: -1,
   audioEnabled: false
 };
 
@@ -118,12 +119,15 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 const scene = new THREE.Scene();
 
-// 30-degree telephoto lens matches the compressed documentary perspective of the reference video
+// 30-degree telephoto FOV gives a visible frustum at Z=0 (distance 82) of:
+// Y in [-21.97, +21.97], X in [-39.08, +39.08] (at 16:9 aspect)
+// And at foreground plane Z=40 (distance 42):
+// Y in [-11.25, +11.25], X in [-20.0, +20.0]
 const camera = new THREE.PerspectiveCamera(
   30,
   window.innerWidth / window.innerHeight,
   0.5,
-  600
+  700
 );
 camera.position.copy(NARRATIVE_STAGES[0].camPos);
 
@@ -150,13 +154,14 @@ controls.addEventListener('start', () => {
 // 1. Overcast Documentary Sky & Soft Misty Sea Horizon Shader
 // ============================================================================
 function createAtmosphericSky() {
-  const skyGeo = new THREE.SphereGeometry(360, 48, 32);
+  const skyGeo = new THREE.SphereGeometry(450, 48, 32);
   const skyMat = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,
     uniforms: {
       uTime: { value: 0 },
-      uWindSpeed: { value: 1.0 }
+      uWindSpeed: { value: 1.0 },
+      uMorph: { value: 0.0 }
     },
     vertexShader: /* glsl */ `
       varying vec3 vWorldPos;
@@ -170,6 +175,7 @@ function createAtmosphericSky() {
       varying vec3 vWorldPos;
       uniform float uTime;
       uniform float uWindSpeed;
+      uniform float uMorph;
 
       float hash(vec2 p) {
         return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -199,34 +205,32 @@ function createAtmosphericSky() {
       }
 
       void main() {
-        vec3 dir = normalize(vWorldPos);
-        // dir.y is around 0 at horizon; map [-0.3, +0.4] smoothly
+        // Compute view-relative vertical angle so horizon stays locked to bottom of frame
+        vec3 rel = vWorldPos - cameraPosition;
+        vec3 dir = normalize(rel);
         float y = dir.y;
 
-        // Exact colors sampled from reference screenshot 1 (2026-11-21_12_34_39.png):
-        // Sky background: #a8cbe9 (RGB 0.66, 0.79, 0.91)
-        // Upper cloud patches: #83a8cc (RGB 0.51, 0.66, 0.80)
-        // Bottom misty sea horizon band: #6b8fb2 -> #4d6b88
-        vec3 deepSeaMist = vec3(0.35, 0.48, 0.62);
-        vec3 seaHorizon  = vec3(0.54, 0.70, 0.85);
+        // Exact sky & bottom mist palette sampled from 鯤鵬001 ~ 鯤鵬005
+        vec3 deepSeaMist = vec3(0.37, 0.50, 0.64);
+        vec3 seaHorizon  = vec3(0.55, 0.71, 0.86);
         vec3 mainSky     = vec3(0.67, 0.80, 0.92);
-        vec3 upperSky    = vec3(0.60, 0.75, 0.89);
+        vec3 upperSky    = vec3(0.61, 0.75, 0.89);
 
-        // Soft diffused horizontal sea-mist gradient near the very bottom of the frame (y ~ -0.18)
-        vec3 col = mix(deepSeaMist, seaHorizon, smoothstep(-0.24, -0.16, y));
-        col = mix(col, mainSky, smoothstep(-0.17, -0.10, y));
-        col = mix(col, upperSky, smoothstep(0.05, 0.35, y));
+        vec3 col = mix(deepSeaMist, seaHorizon, smoothstep(-0.24, -0.17, y));
+        col = mix(col, mainSky, smoothstep(-0.18, -0.11, y));
+        col = mix(col, upperSky, smoothstep(0.04, 0.32, y));
 
-        // Soft overcast cloud patches in the upper portion (matching screenshot 1 & 2 top clouds)
-        vec2 cloudUV = vec2(dir.x * 2.8 + uTime * 0.012 * uWindSpeed, dir.y * 6.5);
+        // Soft stratus cloud patches in the upper sky (prominent in 鯤鵬001, 002, 003)
+        vec2 cloudUV = vec2(dir.x * 3.0 + uTime * 0.012 * uWindSpeed, dir.y * 6.2);
         float c1 = fbm(cloudUV);
-        float c2 = fbm(cloudUV * 1.9 - vec2(uTime * 0.008, 2.1));
-        float cloudPatch = smoothstep(0.47, 0.76, c1 * 0.65 + c2 * 0.35);
+        float c2 = fbm(cloudUV * 1.85 - vec2(uTime * 0.008, 1.7));
+        float cloudPatch = smoothstep(0.45, 0.75, c1 * 0.65 + c2 * 0.35);
 
-        // Large soft cloud shadow on upper right and upper left
+        // In 鯤鵬003 (uMorph ~ 0.5), upper clouds are slightly more pronounced; in 004/005 sky is smoother
+        float cloudStrength = mix(0.62, 0.35, smoothstep(0.55, 0.85, uMorph));
         vec3 cloudColor = vec3(0.49, 0.64, 0.79);
         float upperMask = smoothstep(-0.02, 0.14, y);
-        col = mix(col, cloudColor, cloudPatch * upperMask * 0.62);
+        col = mix(col, cloudColor, cloudPatch * upperMask * cloudStrength);
 
         gl_FragColor = vec4(col, 1.0);
       }
@@ -241,263 +245,363 @@ function createAtmosphericSky() {
 const skyMaterial = createAtmosphericSky();
 
 // ============================================================================
-// 2. Exact Silhouette Profile Functions for Kun (巨鯤) & Peng (大鵬)
+// 2. Five-Stage Coherent Parametric Bird Generators (鯤鵬001 ~ 鯤鵬005)
 // ============================================================================
 /**
- * KUN (巨鯤) 2D/3D Profile Curve matching Screenshot 1 (2026-11-21_12_34_39.png)
- * and Screenshot 2 (2026-11-21_12_35_08.png):
+ * To ensure the transformation from 001 -> 002 -> 003 -> 004 -> 005 is completely
+ * coherent and organic (no chaotic scrambling), each bird `i` is assigned normalized
+ * material coordinates `(u, v, w, role)` that map smoothly across all 5 keyframes!
  *
- * - Leading Snout at X = -25.5, Y = +0.8 (crisp pointed whale rostrum)
- * - Main Whale Body from X = -25.5 to X = +11.5:
- *   - Dorsal (top) outline: rises slightly from +0.8 at snout to a flat/gently arched
- *     dark dorsal ridge around Y = +2.1, then slopes down toward Y = -2.2 at X = +11.5.
- *   - Ventral (belly) outline: drops steeply from the snout (+0.8) into a deep, full,
- *     convex baleen-whale belly reaching Y = -6.8 around X = -4..+2, then curves back up
- *     smoothly to the narrow caudal waist (Y = -3.8) at X = +11.5.
- * - Caudal Peduncle (waist) at X = +11.5 (strictly thick, ~1.8 units tall, NEVER pinches to a line!)
- * - Trailing Tail Fluke Stream from X = +11.5 to X = +33.0:
- *   - Sweeps upward and rightward from Y = -3.0 at waist to Y = +0.5 at X = +33.0,
- *     with a secondary lower wispy fin/vortex stream splitting down toward Y = -6.5.
+ * Local X coordinate is centered relative to each stage's camera X:
+ * - Stage 0 (鯤鵬001): center X =   0.0
+ * - Stage 1 (鯤鵬002): center X =  35.0
+ * - Stage 2 (鯤鵬003): center X =  70.0
+ * - Stage 3 (鯤鵬004): center X = 105.0
+ * - Stage 4 (鯤鵬005): center X = 135.0
  */
-function sampleKunPoint(i, total) {
-  const rGroup = Math.random();
-
-  // Single lone dark scout bird hovering above the whale's back (exact match to Screenshot 1!)
-  if (i === total - 1) {
-    return { x: -3.2, y: 5.4, z: 2.0, densityRole: 0.02, isScout: true };
-  }
-
-  if (rGroup < 0.84) {
-    // Longitudinal coordinate u in [0, 1] from sharp snout (-25.2) to right tail stream (+33.5)
-    const isBody = Math.random() < 0.79;
-    const u = isBody
-      ? Math.pow(Math.random(), 0.90) * 0.63
-      : 0.63 + Math.pow(Math.random(), 1.05) * 0.37;
-
-    const x = -25.2 + u * 58.7; // -25.2 .. +33.5
-
-    let topY, botY, halfZ;
-
-    if (u <= 0.63) {
-      // Main Whale Body (u: 0 -> 0.63, x: -25.2 -> +11.8)
-      const s = u / 0.63; // 0..1 along whale body
-
-      // Sharp pointed rostrum/snout tip at s = 0 (y = +0.75)
-      // Dorsal line: nearly horizontal from snout to mid-back, gently rising to +1.85 around s=0.45,
-      // then sloping smoothly down toward the caudal peduncle waist (y = -2.2 at s=1.0)
-      const dorsalArch = Math.sin(Math.pow(s, 0.75) * Math.PI) * 1.15;
-      const rearDrop = Math.pow(Math.max(0, (s - 0.50) / 0.50), 1.55) * 3.1;
-      topY = 0.75 + dorsalArch - rearDrop;
-
-      // Ventral belly line: starts right at the sharp snout tip (0.75 at s=0) so the nose is razor-pointed!
-      // Sweeps down at a ~42-degree chin angle into a long, smooth baleen-whale belly reaching Y = -5.6,
-      // then curves up smoothly to the waist (y = -3.85 at s=1.0).
-      const chinAndBelly = Math.pow(Math.sin(Math.pow(s, 0.68) * Math.PI), 0.78);
-      const baseLine = 0.75 * (1.0 - Math.pow(s, 0.65)) + (-3.85) * Math.pow(s, 0.65);
-      botY = baseLine - 4.45 * chinAndBelly;
-
-      // 3D Z-thickness
-      halfZ = 0.25 + 6.2 * Math.sin(Math.pow(s, 0.68) * Math.PI);
-    } else {
-      // Sweeping Tail Fluke Stream (u: 0.63 -> 1.0, x: +11.8 -> +33.5)
-      const t = (u - 0.63) / 0.37; // 0..1 along tail
-
-      // Sweeps gracefully upward and rightward from waist (-3.0) to (+0.35)
-      const centerLineY = -3.02 + Math.pow(t, 0.88) * 3.35;
-      const halfH = 0.88 * (1.0 - t * 0.58) + Math.sin(t * Math.PI) * 0.25;
-
-      topY = centerLineY + halfH;
-      botY = centerLineY - halfH;
-      halfZ = 1.1 + t * 3.2;
-    }
-
-    // Vertical placement v in [0, 1] between botY and topY
-    let v;
-    const rEdge = Math.random();
-    if (rEdge < 0.26 && u < 0.60) {
-      // Signature dark, dense dorsal ridge band along the whale's upper back (Screenshot 1 & 2)
-      v = 0.78 + Math.random() * 0.22;
-    } else if (rEdge < 0.42) {
-      // Crisp lower belly boundary
-      v = Math.pow(Math.random(), 1.65) * 0.35;
-    } else {
-      // Rich, continuous interior volume fill
-      v = Math.random();
-    }
-
-    // Internal diagonal wave striations (matching the mottled flock bands inside the whale body)
-    const striationOffset = Math.sin(x * 0.58 + v * 4.2) * 0.16 * (1.0 - Math.pow(2.0 * v - 1.0, 2));
-    const y = botY + v * (topY - botY) + striationOffset;
-    const z = (Math.random() - 0.5) * 2.0 * halfZ * Math.sqrt(1.0 - Math.pow(v * 2.0 - 1.0, 2) * 0.65);
-
-    const densityRole = (u > 0.80) ? (0.62 + (u - 0.80) * 1.8) : (rEdge * 0.72);
-    return { x, y, z, densityRole: Math.min(0.98, densityRole), isScout: false };
-
-  } else if (rGroup < 0.94) {
-    // Secondary Organic Fin Plumes accurately traced from Screenshot 1:
-    // Softly connected to the dorsal back and tail, with Gaussian taper at both ends (never rigid bars!)
-    const subType = i % 4;
-    // Gaussian-like bell distribution along the plume length
-    const t = Math.random();
-    const bell = Math.sin(t * Math.PI);
-    const gaussSpread = (Math.random() + Math.random() + Math.random() - 1.5) * 0.65;
-
-    if (subType === 0 || subType === 1) {
-      // Soft secondary dorsal mist layer emerging smoothly from the rear dorsal back (x = -1..+12)
-      const x = -1.5 + t * 13.5;
-      const yCurve = 1.25 - Math.pow(t, 1.25) * 2.15 + Math.sin(t * Math.PI) * 0.35;
-      const y = yCurve + gaussSpread * (0.45 + 0.55 * bell);
-      const z = (Math.random() - 0.5) * 3.8 * bell;
-      return { x, y, z, densityRole: 0.72 + (1.0 - bell) * 0.26, isScout: false };
-    } else if (subType === 2) {
-      // Lower bifurcated tail fin wisp branching softly from the main tail stream (x = +19..+28.5)
-      const x = 19.0 + t * 9.5;
-      const yCurve = -2.25 + t * 1.15 - Math.sin(t * Math.PI) * 0.28;
-      const y = yCurve + gaussSpread * (0.35 + 0.45 * bell);
-      const z = (Math.random() - 0.5) * 2.8 * bell;
-      return { x, y, z, densityRole: 0.74 + (1.0 - bell) * 0.24, isScout: false };
-    } else {
-      // Very faint, delicate smoke-like wisp in the lower right sky (x = +13.5..+18.0, y = -7.8..-9.2)
-      // Only uses 25% of this bucket so it's a subtle ghostly trace just like Screenshot 1
-      if (Math.random() < 0.72) {
-        // Put the rest back into the main tail stream for extra lush tail feathers
-        const x = 11.5 + t * 21.5;
-        const y = -3.0 + Math.pow(t, 0.88) * 3.35 + gaussSpread * 0.85;
-        const z = (Math.random() - 0.5) * 3.5;
-        return { x, y, z, densityRole: 0.68 + t * 0.28, isScout: false };
-      }
-      const x = 14.2 + t * 3.8;
-      const y = -8.0 - t * 1.15 + gaussSpread * (0.28 * bell + 0.12);
-      const z = (Math.random() - 0.5) * 1.8;
-      return { x, y, z, densityRole: 0.91 + (1.0 - bell) * 0.08, isScout: false };
-    }
-
-  } else {
-    // Soft atmospheric boundary mist tightly hugging the whale contour
-    const s = Math.pow(Math.random(), 0.9);
-    const x = -24.5 + s * 54.0;
-    const centerY = s < 0.63 ? (-1.8 - Math.sin((s / 0.63) * Math.PI) * 1.5) : (-2.6 + ((s - 0.63) / 0.37) * 2.8);
-    const spreadY = s < 0.63 ? (0.8 + Math.sin((s / 0.63) * Math.PI) * 3.1) : 1.1;
-    const y = centerY + (Math.random() - 0.5) * 2.0 * spreadY;
-    const z = (Math.random() - 0.5) * 7.5;
-    return { x, y, z, densityRole: 0.84 + Math.random() * 0.15, isScout: false };
-  }
-}
-
-/**
- * PENG (大鵬) 2D/3D Profile Curve matching Screenshot 4 (2026-11-21_13_18_14.png)
- * and Screenshot 5 (2026-11-21_13_18_38.png):
- *
- * Centered around camera X = 44..46 so it soars directly above the open-field utility poles!
- * - Far-left razor-sharp wingtip at X = +12.0, Y = +2.8
- * - Long straight/gently curved upper wing leading edge spanning from X = +12.0 to X = +76.0
- * - Three dramatic descending cloud-wing tiers on the lower right (X = +40..+72, Y = 0..-10.5)
- *   right above the utility poles and bird nest ("怒而飛，其翼若垂天之雲").
- */
-function samplePengPoint(i, total) {
-  if (i === total - 1) {
-    // High lone scout bird in the upper right sky (exact match to Screenshot 5 upper-right bird!)
-    return { x: 59.5, y: 9.2, z: 3.0 };
-  }
-  if (i === total - 2) {
-    // Mid-sky lone bird slightly above the leading wing edge (Screenshot 5 center-left tiny bird)
-    return { x: 40.5, y: 2.6, z: 2.0 };
-  }
-
-  const r = Math.random();
-
-  if (r < 0.58) {
-    // 1. Main Sweeping Wing Blade & Dense Upper Leading Edge (X: +12.0 to +74.0)
-    const s = Math.pow(Math.random(), 0.92); // 0 at left wingtip (+12), 1 at far right wing (+74)
-    const x = 12.0 + s * 62.0;
-
-    // Upper leading edge: starts at Y = +2.6 on left tip, dips slightly in center (+0.2), rises to +0.8 on right
-    const topY = 2.6 - Math.sin(s * Math.PI * 0.78) * 2.2 - s * 0.4;
-
-    // Thickness of the main wing blade: razor-thin at left tip (0.35), swells into a deep chest/wing-belly
-    let thickness;
-    if (s < 0.52) {
-      thickness = 0.35 + Math.pow(s / 0.52, 1.35) * 4.8;
-    } else {
-      thickness = 5.15 * (1.0 - Math.pow((s - 0.52) / 0.48, 1.1) * 0.65);
-    }
-
-    const botY = topY - thickness;
-    const v = Math.pow(Math.random(), 0.85);
-    const y = botY + v * (topY - botY);
-    const z = (Math.random() - 0.5) * (1.0 + s * 10.0);
-
-    return { x, y, z };
-
-  } else if (r < 0.86) {
-    // 2. Second Tier: Massive Central Belly / Cloud-Wing Lobe (Screenshot 4 & 5 dark lower-middle mass)
-    const s = Math.random(); // spans X = +38.0 to +66.0
-    const x = 38.0 + s * 28.0;
-
-    const topY = -2.2 - s * 1.4;
-    const lobeDepth = 4.6 * Math.sin(Math.pow(s, 0.75) * Math.PI);
-    const botY = topY - (0.8 + lobeDepth);
-
-    const v = Math.random();
-    const y = botY + v * (topY - botY);
-    const z = (Math.random() - 0.5) * 9.0;
-
-    return { x, y, z };
-
-  } else {
-    // 3. Third Tier: Lower Trailing Cloud-Feathers hovering right above the utility poles (Screenshot 5 bottom-right)
-    const s = Math.random(); // spans X = +45.0 to +68.0
-    const x = 45.0 + s * 23.0;
-
-    const topY = -6.2 - s * 1.2;
-    const depth = 3.2 * Math.sin(s * Math.PI);
-    const botY = topY - (0.6 + depth);
-
-    const y = botY + Math.random() * (topY - botY);
-    const z = (Math.random() - 0.5) * 7.5;
-
-    return { x, y, z };
-  }
-}
-
-function buildMurmurationGeometry(count) {
+function buildFiveStageGeometry(count) {
   const geometry = new THREE.BufferGeometry();
 
-  const posKun = new Float32Array(count * 3);
-  const posPeng = new Float32Array(count * 3);
-  const birdSeeds = new Float32Array(count * 4); // x: phase, y: speed, z: densityRole, w: scale
+  const pos1 = new Float32Array(count * 3); // 鯤鵬001
+  const pos2 = new Float32Array(count * 3); // 鯤鵬002
+  const pos3 = new Float32Array(count * 3); // 鯤鵬003
+  const pos4 = new Float32Array(count * 3); // 鯤鵬004
+  const pos5 = new Float32Array(count * 3); // 鯤鵬005
+  const birdSeeds = new Float32Array(count * 4); // x: phase, y: speed, z: role/alphaWeight, w: size
 
   for (let i = 0; i < count; i++) {
     const i3 = i * 3;
     const i4 = i * 4;
 
-    const kun = sampleKunPoint(i, count);
-    const peng = samplePengPoint(i, count);
+    // Coherent longitudinal coordinate u in [0, 1] (left tip to right trailing edge)
+    // and vertical coordinate v in [0, 1] (bottom edge to top edge)
+    const rGroup = Math.random();
+    const uBase = Math.pow(Math.random(), 0.92);
 
-    posKun[i3]     = kun.x;
-    posKun[i3 + 1] = kun.y;
-    posKun[i3 + 2] = kun.z;
+    // Shape vertical distribution so top/bottom edges & internal bands are rich and crisp
+    let vBase;
+    const rEdge = Math.random();
+    if (rEdge < 0.25) {
+      vBase = 0.78 + Math.random() * 0.22; // Dense upper ridge
+    } else if (rEdge < 0.45) {
+      vBase = Math.pow(Math.random(), 1.7) * 0.32; // Dense lower belly edge
+    } else {
+      vBase = Math.random(); // Continuous interior volume
+    }
 
-    posPeng[i3]     = peng.x;
-    posPeng[i3 + 1] = peng.y;
-    posPeng[i3 + 2] = peng.z;
+    const zRand = (Math.random() - 0.5) * 2.0;
+    const gauss = (Math.random() + Math.random() + Math.random() - 1.5) * 0.65;
+    const isScout1 = (i === count - 1);
+    const isScout2 = (i === count - 2);
 
+    // ========================================================================
+    // KEYFRAME 1: 鯤鵬001.png (Center X = 0.0)
+    // Full Kun Whale hovering above sea horizon, viewing pavilion at bottom-right
+    // ========================================================================
+    let x1, y1, z1, roleWeight = 0.35;
+
+    if (isScout1) {
+      // Tiny lone bird above the whale's mid-back in 鯤鵬001
+      x1 = -3.2; y1 = 5.5; z1 = 2.0; roleWeight = 0.02;
+    } else if (isScout2) {
+      // Second lone bird tucked into body in 001, emerges in 005
+      x1 = -10.0; y1 = 0.5; z1 = 0.0; roleWeight = 0.02;
+    } else if (rGroup < 0.85) {
+      // Main Whale Body (u < 0.63) & Rightward Tail Fluke Stream (u >= 0.63)
+      const u = (Math.random() < 0.78) ? (uBase * 0.63) : (0.63 + uBase * 0.37);
+      x1 = -25.2 + u * 58.7; // -25.2 .. +33.5
+
+      let topY, botY, halfZ;
+      if (u <= 0.63) {
+        const s = u / 0.63;
+        const dorsalArch = Math.sin(Math.pow(s, 0.75) * Math.PI) * 1.15;
+        const rearDrop = Math.pow(Math.max(0, (s - 0.50) / 0.50), 1.55) * 3.1;
+        topY = 0.75 + dorsalArch - rearDrop;
+
+        const chinAndBelly = Math.pow(Math.sin(Math.pow(s, 0.68) * Math.PI), 0.78);
+        const baseLine = 0.75 * (1.0 - Math.pow(s, 0.65)) + (-3.85) * Math.pow(s, 0.65);
+        botY = baseLine - 4.45 * chinAndBelly;
+        halfZ = 0.25 + 6.2 * Math.sin(Math.pow(s, 0.68) * Math.PI);
+      } else {
+        const t = (u - 0.63) / 0.37;
+        const centerLineY = -3.02 + Math.pow(t, 0.88) * 3.35;
+        const halfH = 0.88 * (1.0 - t * 0.58) + Math.sin(t * Math.PI) * 0.25;
+        topY = centerLineY + halfH;
+        botY = centerLineY - halfH;
+        halfZ = 1.1 + t * 3.2;
+      }
+
+      const striation = Math.sin(x1 * 0.58 + vBase * 4.2) * 0.16 * (1.0 - Math.pow(2.0 * vBase - 1.0, 2));
+      y1 = botY + vBase * (topY - botY) + striation;
+      z1 = zRand * halfZ * Math.sqrt(1.0 - Math.pow(vBase * 2.0 - 1.0, 2) * 0.65);
+      roleWeight = (u > 0.80) ? (0.62 + (u - 0.80) * 1.8) : (rEdge * 0.70);
+    } else {
+      // Organic dorsal & tail fin plumes in 鯤鵬001
+      const t = uBase;
+      const bell = Math.sin(t * Math.PI);
+      if (i % 3 !== 0) {
+        // Upper rear dorsal mist plume
+        x1 = -1.5 + t * 13.5;
+        y1 = 1.25 - Math.pow(t, 1.25) * 2.15 + Math.sin(t * Math.PI) * 0.35 + gauss * (0.45 + 0.55 * bell);
+        z1 = zRand * 1.9 * bell;
+        roleWeight = 0.72 + (1.0 - bell) * 0.25;
+      } else {
+        // Lower bifurcated tail fin wisp
+        x1 = 19.0 + t * 9.5;
+        y1 = -2.25 + t * 1.15 - Math.sin(t * Math.PI) * 0.28 + gauss * (0.35 + 0.45 * bell);
+        z1 = zRand * 1.4 * bell;
+        roleWeight = 0.75 + (1.0 - bell) * 0.22;
+      }
+    }
+
+    pos1[i3]     = x1;
+    pos1[i3 + 1] = y1;
+    pos1[i3 + 2] = z1;
+
+    // ========================================================================
+    // KEYFRAME 2: 鯤鵬002.png (Center X = 60.0)
+    // Telephoto close-up of elongated Kun whale spanning from X_local = -35.5 (left tip)
+    // right off the right edge of the frame (X_local = +39.0)!
+    // Prominent dark diagonal density bands inside, dark lower belly band on the right,
+    // and delicate upper dorsal mist wisps trailing to the right.
+    // ========================================================================
+    let x2, y2, z2;
+    const cx2 = 60.0;
+
+    if (isScout1 || isScout2) {
+      // Tiny bird speck in far upper-right of 鯤鵬002
+      x2 = cx2 + 34.5; y2 = 4.6; z2 = 1.0;
+    } else if (rGroup < 0.86) {
+      const s = uBase; // 0 at sharp left snout (-35.5), 1 at right edge (+39.5)
+      const lx = -35.5 + s * 75.0;
+
+      let topY, botY;
+      if (s < 0.55) {
+        const k = s / 0.55;
+        topY = 1.05 + Math.sin(Math.pow(k, 0.65) * Math.PI) * 1.85 - k * 0.6;
+      } else {
+        const k = (s - 0.55) / 0.45;
+        topY = 0.45 - k * 2.1 + Math.sin(k * Math.PI) * 0.4;
+      }
+
+      if (s < 0.14) {
+        const k = s / 0.14;
+        botY = 1.05 - Math.pow(k, 0.82) * 4.85;
+      } else if (s < 0.78) {
+        const k = (s - 0.14) / 0.64;
+        botY = -3.80 - Math.pow(k, 0.95) * 3.45;
+      } else {
+        const k = (s - 0.78) / 0.22;
+        botY = -7.25 + Math.pow(k, 1.1) * 1.75;
+      }
+
+      const diagWave = Math.sin(lx * 0.42 + vBase * 5.5) * 0.28;
+      x2 = cx2 + lx;
+      y2 = botY + vBase * (topY - botY) + diagWave;
+      z2 = zRand * (1.2 + Math.sin(s * Math.PI) * 5.0);
+    } else {
+      const t = uBase;
+      const bell = Math.sin(t * Math.PI);
+      const branch = i % 2;
+      if (branch === 0) {
+        const lx = -4.0 + t * 29.0;
+        x2 = cx2 + lx;
+        y2 = 1.8 + t * 1.55 + gauss * (0.35 * bell + 0.15);
+        z2 = zRand * 2.5;
+      } else {
+        const lx = 2.0 + t * 31.0;
+        x2 = cx2 + lx;
+        y2 = 0.4 - t * 2.2 + gauss * (0.65 * bell + 0.25);
+        z2 = zRand * 3.2;
+      }
+    }
+
+    pos2[i3]     = x2;
+    pos2[i3 + 1] = y2;
+    pos2[i3 + 2] = z2;
+
+    // ========================================================================
+    // KEYFRAME 3: 鯤鵬003.png (Center X = 120.0)
+    // "化而爲鳥，其名爲鵬" — The whale flattens and elongates into a sleek, undulating
+    // wing-like ribbon spanning from lx = -30.5 (rounded-pointed left head) all the way
+    // to the right edge (lx = +39.5).
+    // ========================================================================
+    let x3, y3, z3;
+    const cx3 = 120.0;
+
+    if (isScout1 || isScout2) {
+      x3 = cx3 - 5.2; y3 = 1.9; z3 = 1.0;
+    } else if (rGroup < 0.78) {
+      const s = uBase;
+      const lx = -30.5 + s * 70.0;
+
+      let lowerEdgeY, ribbonThickness;
+      if (s < 0.52) {
+        const k = s / 0.52;
+        lowerEdgeY = -2.1 - Math.pow(k, 0.85) * 4.3 + Math.sin(k * Math.PI * 2.0) * 0.25;
+        ribbonThickness = 1.8 * Math.sin(Math.pow(k, 0.55) * Math.PI) + 0.55;
+      } else {
+        const k = (s - 0.52) / 0.48;
+        lowerEdgeY = -6.4 + Math.sin(k * Math.PI * 2.2) * 0.55 + k * 0.35;
+        ribbonThickness = 1.65 * (1.0 - k * 0.45) + Math.sin(k * Math.PI * 3.0) * 0.3;
+      }
+
+      const vBias = Math.pow(vBase, 1.45);
+      x3 = cx3 + lx;
+      y3 = lowerEdgeY + vBias * ribbonThickness;
+      z3 = zRand * (0.8 + ribbonThickness * 1.6);
+    } else {
+      const t = uBase;
+      const lx = -27.5 + t * 36.0;
+      const domeTop = -0.2 - Math.pow(t, 1.4) * 1.8 + Math.sin(t * Math.PI) * 0.6;
+      const domeBot = -2.2 - t * 3.2;
+      x3 = cx3 + lx;
+      y3 = domeBot + vBase * (domeTop - domeBot) + gauss * 0.35;
+      z3 = zRand * 3.5;
+    }
+
+    pos3[i3]     = x3;
+    pos3[i3 + 1] = y3;
+    pos3[i3 + 2] = z3;
+
+    // ========================================================================
+    // KEYFRAME 4: 鯤鵬004.png (Center X = 180.0)
+    // "鵬之背，不知其幾千里也" — Massive sweeping Peng wing & deep descending body!
+    // ========================================================================
+    let x4, y4, z4;
+    const cx4 = 180.0;
+
+    if (isScout1 || isScout2) {
+      x4 = cx4 - 7.5; y4 = -7.8; z4 = 2.0;
+    } else {
+      const s = Math.pow(uBase, 0.88);
+      const lx = -37.0 + s * 76.5;
+
+      let topY, botY;
+      if (s < 0.65) {
+        const k = s / 0.65;
+        topY = 0.6 - Math.pow(k, 0.7) * 1.75 + Math.sin(k * Math.PI) * 0.25;
+      } else {
+        const k = (s - 0.65) / 0.35;
+        topY = -1.15 + Math.sin(k * Math.PI * 0.65) * 0.85;
+      }
+
+      if (s < 0.28) {
+        const k = s / 0.28;
+        botY = 0.6 - Math.pow(k, 1.05) * 5.2;
+      } else if (s < 0.58) {
+        const k = (s - 0.28) / 0.30;
+        botY = -4.6 - Math.pow(k, 1.1) * 1.65;
+      } else {
+        const k = (s - 0.58) / 0.42;
+        botY = -6.25 - Math.pow(Math.sin(k * Math.PI * 0.65), 1.15) * 9.2;
+      }
+
+      let yVal = botY + vBase * (topY - botY);
+      if (s > 0.56 && rEdge < 0.30) {
+        const kFold = (s - 0.56) / 0.44;
+        yVal = mix(yVal, botY + 0.8 + kFold * 1.2, 0.65);
+      }
+
+      const striation4 = Math.sin(lx * 0.48 + vBase * 5.0) * 0.22;
+      x4 = cx4 + lx;
+      y4 = yVal + striation4;
+      z4 = zRand * (0.5 + Math.pow(s, 0.9) * 7.5);
+    }
+
+    pos4[i3]     = x4;
+    pos4[i3 + 1] = y4;
+    pos4[i3 + 2] = z4;
+
+    // ========================================================================
+    // KEYFRAME 5: 鯤鵬005.png (Center X = 240.0)
+    // "怒而飛，其翼若垂天之雲" — The iconic three-tiered cloud-wing Peng formation!
+    // ========================================================================
+    let x5, y5, z5;
+    const cx5 = 240.0;
+
+    if (isScout1) {
+      // Prominent dark lone bird high in upper-right sky of 鯤鵬005!
+      x5 = cx5 + 24.8; y5 = 9.2; z5 = 2.0;
+    } else if (isScout2) {
+      // Second tiny lone bird above center-left wing in 鯤鵬005!
+      x5 = cx5 - 4.5; y5 = 1.9; z5 = 1.5;
+    } else if (rGroup < 0.56) {
+      // Tier 1: Main Upper Wing Blade spanning from left tip (lx = -33.5, y = +2.2) to right tip (lx = +36.5, y = -0.3)
+      const s = uBase;
+      const lx = -33.5 + s * 70.0;
+
+      // Top leading edge dips smoothly in center and extends flatly to right wingtip
+      const topY = 2.2 * Math.pow(1.0 - s, 1.35) - 1.35 * Math.sin(s * Math.PI) - 0.3 * s;
+
+      // Thickness of upper wing blade: sharp at both left tip (0.25) and right tip (0.35),
+      // thickest in the middle-right wing root (4.4 units)
+      const bladeThick = 0.25 + 4.35 * Math.pow(Math.sin(Math.pow(s, 0.82) * Math.PI), 1.15);
+      const botY = topY - bladeThick;
+
+      x5 = cx5 + lx;
+      y5 = botY + Math.pow(vBase, 0.88) * (topY - botY);
+      z5 = zRand * (0.4 + Math.sin(s * Math.PI) * 5.5);
+
+    } else if (rGroup < 0.84) {
+      // Tier 2: Middle Hanging Cloud-Wing Lobe (lx = +2.5 to +27.5, y = -3.8 down to -9.2)
+      const s = uBase;
+      const lx = 2.5 + s * 25.0;
+
+      const topY = -3.5 - s * 1.2;
+      const lobeDepth = 4.6 * Math.sin(Math.pow(s, 0.72) * Math.PI);
+      const botY = topY - (0.6 + lobeDepth);
+
+      x5 = cx5 + lx;
+      y5 = botY + vBase * (topY - botY);
+      z5 = zRand * 4.5;
+
+    } else {
+      // Tier 3: Lower Horizontal Cloud Step hovering above the utility poles (lx = +11.5 to +27.0, y = -8.8 to -12.6)
+      const s = uBase;
+      const lx = 11.5 + s * 15.5;
+
+      const topY = -8.6 - s * 0.6;
+      const stepDepth = 3.6 * Math.sin(Math.pow(s, 0.65) * Math.PI);
+      const botY = topY - (0.4 + stepDepth);
+
+      // Concentrate a crisp dark horizontal bottom shelf at y ~ -12.3 (seen in 鯤鵬005 bottom of flock!)
+      const vStep = (Math.random() < 0.35) ? (Math.random() * 0.25) : vBase;
+      x5 = cx5 + lx;
+      y5 = botY + vStep * (topY - botY);
+      z5 = zRand * 3.5;
+    }
+
+    pos5[i3]     = x5;
+    pos5[i3 + 1] = y5;
+    pos5[i3 + 2] = z5;
+
+    // ========================================================================
+    // Per-Bird Attributes
+    // ========================================================================
     birdSeeds[i4]     = Math.random() * Math.PI * 2.0;
     birdSeeds[i4 + 1] = 0.75 + Math.random() * 0.65;
-    birdSeeds[i4 + 2] = kun.densityRole;
-    birdSeeds[i4 + 3] = kun.isScout ? 3.8 : (0.85 + Math.random() * 0.90);
+    birdSeeds[i4 + 2] = roleWeight;
+    birdSeeds[i4 + 3] = (isScout1 || isScout2) ? 4.2 : (0.85 + Math.random() * 0.90);
   }
 
-  geometry.setAttribute('position', new THREE.BufferAttribute(posKun, 3));
-  geometry.setAttribute('aPosKun', new THREE.BufferAttribute(posKun, 3));
-  geometry.setAttribute('aPosPeng', new THREE.BufferAttribute(posPeng, 3));
+  geometry.setAttribute('position', new THREE.BufferAttribute(pos1, 3));
+  geometry.setAttribute('aPos1', new THREE.BufferAttribute(pos1, 3));
+  geometry.setAttribute('aPos2', new THREE.BufferAttribute(pos2, 3));
+  geometry.setAttribute('aPos3', new THREE.BufferAttribute(pos3, 3));
+  geometry.setAttribute('aPos4', new THREE.BufferAttribute(pos4, 3));
+  geometry.setAttribute('aPos5', new THREE.BufferAttribute(pos5, 3));
   geometry.setAttribute('aSeed', new THREE.BufferAttribute(birdSeeds, 4));
 
   return geometry;
 }
 
+function mix(a, b, t) {
+  return a + (b - a) * t;
+}
+
 // ============================================================================
-// 3. Custom WebGL Shader for 110,000 Birds with Internal Density Waves
+// 3. Custom WebGL Shader Interpolating Across All 5 Keyframes (aPos1 ~ aPos5)
 // ============================================================================
 const murmurationUniforms = {
   uTime: { value: 0 },
@@ -514,8 +618,11 @@ const murmurationMaterial = new THREE.ShaderMaterial({
   blending: THREE.NormalBlending,
   uniforms: murmurationUniforms,
   vertexShader: /* glsl */ `
-    attribute vec3 aPosKun;
-    attribute vec3 aPosPeng;
+    attribute vec3 aPos1;
+    attribute vec3 aPos2;
+    attribute vec3 aPos3;
+    attribute vec3 aPos4;
+    attribute vec3 aPos5;
     attribute vec4 aSeed;
 
     uniform float uTime;
@@ -556,6 +663,31 @@ const murmurationMaterial = new THREE.ShaderMaterial({
       return vec3(n2 - n3, n3 - n1, n1 - n2);
     }
 
+    // Piecewise smooth interpolation across the 5 exact keyframes:
+    // t = 0.00 -> aPos1 (鯤鵬001)
+    // t = 0.25 -> aPos2 (鯤鵬002)
+    // t = 0.50 -> aPos3 (鯤鵬003)
+    // t = 0.75 -> aPos4 (鯤鵬004)
+    // t = 1.00 -> aPos5 (鯤鵬005)
+    vec3 sampleFiveStagePosition(float t, out float transitionBell) {
+      float scaled = clamp(t, 0.0, 1.0) * 4.0;
+      float seg = floor(min(scaled, 3.9999));
+      float frac = scaled - seg;
+      // Smooth Hermite interpolation with a plateau near each keyframe so each reference photo shape holds clearly
+      float s = smoothstep(0.08, 0.92, frac);
+      transitionBell = sin(s * 3.14159265);
+
+      if (seg < 0.5) {
+        return mix(aPos1, aPos2, s);
+      } else if (seg < 1.5) {
+        return mix(aPos2, aPos3, s);
+      } else if (seg < 2.5) {
+        return mix(aPos3, aPos4, s);
+      } else {
+        return mix(aPos4, aPos5, s);
+      }
+    }
+
     void main() {
       float phase = aSeed.x;
       float speed = aSeed.y;
@@ -564,31 +696,25 @@ const murmurationMaterial = new THREE.ShaderMaterial({
 
       float densityFade = smoothstep(uDensityLimit, uDensityLimit - 0.08, role * 0.92);
 
-      // Progressive head-to-tail morphing wave from Kun (uMorph < 0.35) to Peng (uMorph > 0.65)
-      float xNorm = clamp((aPosKun.x + 26.0) / 58.0, 0.0, 1.0);
-      float localMorph = smoothstep(0.32 + xNorm * 0.14, 0.62 + xNorm * 0.14, uMorph);
+      // Slight head-to-tail propagation delay so the flock flows organically between keyframes
+      float xNorm = clamp((aPos1.x + 26.0) / 58.0, 0.0, 1.0);
+      float delayedMorph = clamp(uMorph + (0.5 - xNorm) * 0.025 * sin(uMorph * 3.14159265), 0.0, 1.0);
 
-      // Act 2 ("鯤之大，不知其幾千里也"): Kun elongates and streamlines like Screenshot 2 & 3
-      vec3 kunPos = aPosKun;
-      float act2Stretch = smoothstep(0.16, 0.38, uMorph) * (1.0 - localMorph);
-      kunPos.x *= (1.0 + act2Stretch * 0.28);
-      kunPos.y *= (1.0 - act2Stretch * 0.22);
+      float transBell = 0.0;
+      vec3 pos = sampleFiveStagePosition(delayedMorph, transBell);
 
-      vec3 pos = mix(kunPos, aPosPeng, localMorph);
-
-      // Act 3 ("化而爲鳥"): Swirling metamorphosis vortex
-      float metamorphosisBell = sin(localMorph * 3.14159265);
+      // Bounded organic murmuration flow (tight at keyframes so silhouette matches 001~005 photos,
+      // slightly livelier during transitions between stages)
       float tFlow = uTime * 0.42 * uWindSpeed;
-
-      // Internal turbulence stays tightly bounded in Acts 1-2 & 4-5 so the Kun whale and
-      // Peng bird profiles match the reference photos with crisp contours!
       vec3 swirl = curlSwirl(pos * 0.11, tFlow);
-      float baseDisplacement = 0.28 + 0.45 * smoothstep(0.55, 1.0, role);
-      float vortexSurge = metamorphosisBell * 4.8;
-      pos += swirl * (baseDisplacement + vortexSurge) * uTurbulence;
+      float baseDisplacement = (0.24 + 0.35 * smoothstep(0.55, 1.0, role) + transBell * 0.55) * uTurbulence;
 
-      // Subtle living breathing wave along the body
-      float bodyWave = sin(pos.x * 0.11 - uTime * 1.25 * uWindSpeed) * 0.16;
+      // Keep lone scout birds at their exact composition coordinates
+      float scoutLock = step(scale, 3.0);
+      pos += swirl * baseDisplacement * scoutLock;
+
+      // Subtle living breathing wave along the flock
+      float bodyWave = sin(pos.x * 0.11 - uTime * 1.25 * uWindSpeed) * 0.12 * scoutLock;
       pos.y += bodyWave;
 
       // Individual wing-flapping oscillation
@@ -602,16 +728,16 @@ const murmurationMaterial = new THREE.ShaderMaterial({
       float dist = max(-mvPosition.z, 10.0);
       gl_PointSize = (205.0 / dist) * scale * uPixelRatio;
 
-      // Internal Diagonal Density Striations (recreates the dark/light undulating bands
-      // inside the whale body seen in Screenshot 1 & 2)
-      float striation = sin(pos.x * 0.55 + pos.y * 1.15 - tFlow * 2.4) * 0.5 + 0.5;
-      float noiseWave = noise3(pos * 0.18 - vec3(tFlow * 1.5, 0.0, 0.0));
+      // Internal Diagonal Density Striations (recreates the dark/light undulating bands inside 001~005)
+      float striation = sin(pos.x * 0.52 + pos.y * 1.15 - tFlow * 2.2) * 0.5 + 0.5;
+      float noiseWave = noise3(pos * 0.18 - vec3(tFlow * 1.4, 0.0, 0.0));
       vShade = clamp(striation * 0.45 + noiseWave * 0.55, 0.0, 1.0);
 
       vTilt = sin(phase + uTime * 1.2 + pos.x * 0.06) * 0.38;
 
-      // Core & dorsal ridge birds have rich smoky opacity; trailing tail wisps fade softly into the sky
-      float baseAlpha = mix(0.58, 0.16, smoothstep(0.42, 0.98, role));
+      // Rich charcoal opacity in core & ridges; soft mist dissipation at trailing edges
+      float baseAlpha = mix(0.60, 0.16, smoothstep(0.42, 0.98, role));
+      if (scale > 3.0) baseAlpha = 0.92; // Make the lone scout birds crisp and clearly visible
       vAlpha = baseAlpha * densityFade;
     }
   `,
@@ -644,7 +770,7 @@ const murmurationMaterial = new THREE.ShaderMaterial({
       if (birdMask < 0.05) discard;
 
       // Exact documentary color matching: slate charcoal darks + misty blue-grey midtones
-      vec3 darkSlate = vec3(0.16, 0.25, 0.35);
+      vec3 darkSlate = vec3(0.15, 0.24, 0.34);
       vec3 mistyBlue = vec3(0.42, 0.56, 0.71);
       vec3 birdColor = mix(darkSlate, mistyBlue, vShade * 0.72);
 
@@ -653,13 +779,33 @@ const murmurationMaterial = new THREE.ShaderMaterial({
   `
 });
 
-const murmurationGeometry = buildMurmurationGeometry(TOTAL_BIRDS);
+const murmurationGeometry = buildFiveStageGeometry(TOTAL_BIRDS);
 const murmurationPoints = new THREE.Points(murmurationGeometry, murmurationMaterial);
+murmurationPoints.frustumCulled = false;
 scene.add(murmurationPoints);
 
 // ============================================================================
-// 4. Documentary Foreground Anchors (Exact Framing for Screenshots 1 & 4-5)
+// 4. Stage-Aligned Documentary Foreground Landmarks (鯤鵬001 ~ 鯤鵬005)
 // ============================================================================
+/**
+ * Places foreground landmarks at Z = 40 so they align 1:1 with each stage's camera center:
+ * - Stage 0 (鯤鵬001, cam X = 0):
+ *   - Coastal Viewing Pavilion at X = +18.6, Y = -7.85 (bottom-right corner)
+ *   - Tiny coastal treetop scrub at X = +1..+16, Y = -11.35
+ * - Stage 1 (鯤鵬002, cam X = 35):
+ *   - Pure open sky & misty horizon (no foreground structures, matching 鯤鵬002!)
+ * - Stage 2 (鯤鵬003, cam X = 70):
+ *   - Very thin distant antenna/pole tips at X = 60.5, 63.8 and tiny treetop scrub along
+ *     the bottom-right edge (X = 71..84, Y = -11.2), matching the bottom edge of 鯤鵬003!
+ * - Stage 3 (鯤鵬004, cam X = 105):
+ *   - Distant pole tips at bottom-center-left (X = 98.2, 99.6)
+ *   - Prominent double H-frame utility pole with large Osprey Nest & perched birds on sagging wires
+ *     at bottom-right (X = 117..124), matching 鯤鵬004!
+ * - Stage 4 (鯤鵬005, cam X = 135):
+ *   - Full receding row of open-field utility poles from center-bottom (X = 128, 131, 134, 138)
+ *     to the large H-frame utility pole with the Osprey Nest and rows of perched starlings
+ *     on the catenary power lines at bottom-right (X = 149..154), matching 鯤鵬005!
+ */
 function createDocumentaryForeground() {
   const fgGroup = new THREE.Group();
 
@@ -669,7 +815,7 @@ function createDocumentaryForeground() {
   const wireMat = new THREE.LineBasicMaterial({
     color: 0x1b2530,
     transparent: true,
-    opacity: 0.82
+    opacity: 0.85
   });
 
   function createWeatheredRoofMaterial() {
@@ -700,20 +846,16 @@ function createDocumentaryForeground() {
   }
 
   // --------------------------------------------------------------------------
-  // B. Coastal Viewing Pavilion (觀海涼亭 — Screenshot 1 Bottom-Right Corner)
-  // Raised to Y = -7.85 so the 4 pillars, seated/standing crowd with white hoodies,
-  // and weathered shingle roof are all prominently visible above the bottom edge!
+  // STAGE 0 FOREGROUND (鯤鵬001.png, Cam X = 0): Coastal Viewing Pavilion
   // --------------------------------------------------------------------------
   const pavilion = new THREE.Group();
   pavilion.position.set(18.6, -7.85, 40.0);
   pavilion.scale.setScalar(1.08);
 
-  // Lower solid wooden railing / deck base
   const deckBase = new THREE.Mesh(new THREE.BoxGeometry(6.2, 1.8, 4.2), darkWoodMat);
   deckBase.position.y = -1.65;
   pavilion.add(deckBase);
 
-  // 4 Vertical Timber Columns (open frame with sky shining through behind them!)
   const colX = [-2.4, -1.05, 0.35, 1.75];
   colX.forEach((cx) => {
     const col = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.85, 0.24), darkWoodMat);
@@ -721,7 +863,6 @@ function createDocumentaryForeground() {
     pavilion.add(col);
   });
 
-  // Crowd of spectators inside the pavilion watching the Kun whale (with white-hoodie figures like Screenshot 1!)
   const crowdData = [
     { x: -2.65, h: 0.62, white: false },
     { x: -2.15, h: 0.68, white: true },
@@ -744,12 +885,10 @@ function createDocumentaryForeground() {
     pavilion.add(head);
   });
 
-  // Upper eave fascia beam
   const eaveBeam = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.24, 4.8), darkWoodMat);
   eaveBeam.position.y = 0.92;
   pavilion.add(eaveBeam);
 
-  // Pyramidal Hipped Shingle Roof (亭頂)
   const roofMat = createWeatheredRoofMaterial();
   const roofGeo = new THREE.ConeGeometry(4.7, 2.15, 4);
   roofGeo.rotateY(Math.PI * 0.25);
@@ -760,73 +899,78 @@ function createDocumentaryForeground() {
 
   fgGroup.add(pavilion);
 
-  // --------------------------------------------------------------------------
-  // C. Subtle Bottom-Edge Treeline Scrub (Only the very top tips peeking at bottom edge,
-  // leaving the left horizon open misty sea just like Screenshot 1!)
-  // --------------------------------------------------------------------------
-  const scrubGroup = new THREE.Group();
-  for (let k = 0; k < 42; k++) {
-    const tx = 1.0 + k * 0.45 + (Math.random() - 0.5) * 0.2;
-    const ty = -11.35 + Math.sin(k * 0.7) * 0.12;
-    const scrub = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(0.22 + (k % 3) * 0.08, 0),
-      darkSilhouetteMat
-    );
-    scrub.scale.set(1.8, 0.7, 1.0);
-    scrub.position.set(tx, ty, 40.0);
-    scrubGroup.add(scrub);
-  }
-  fgGroup.add(scrubGroup);
+  // Subtle bottom treetop tips for Stage 0 (X = 1..15) and Stage 2 (鯤鵬003, Cam X = 120, X = 120..135)
+  [1.0, 120.5].forEach((baseX) => {
+    for (let k = 0; k < 34; k++) {
+      const tx = baseX + k * 0.45 + (Math.random() - 0.5) * 0.2;
+      const ty = -11.32 + Math.sin(k * 0.7) * 0.12;
+      const scrub = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(0.22 + (k % 3) * 0.08, 0),
+        darkSilhouetteMat
+      );
+      scrub.scale.set(1.8, 0.7, 1.0);
+      scrub.position.set(tx, ty, 40.0);
+      fgGroup.add(scrub);
+    }
+  });
+
+  // Two tiny distant thin mast/pole tips visible at the bottom-left of 鯤鵬003 (Cam X = 120)
+  [111.2, 115.0].forEach((px, idx) => {
+    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.2, 6), darkSilhouetteMat);
+    mast.position.set(px, -11.1, 40.0);
+    fgGroup.add(mast);
+    if (idx === 1) {
+      const cross = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.04, 0.04), darkSilhouetteMat);
+      cross.position.set(px, -10.55, 40.0);
+      fgGroup.add(cross);
+    }
+  });
 
   // --------------------------------------------------------------------------
-  // D. Open-Field Utility Poles, Osprey Bird Nest & Perched Birds on Wires
-  // (Visible in Acts 4 & 5 when camera pans right to X = 42..46, matching Screenshots 4 & 5)
+  // Helper to build an authentic H-frame utility pole with crossarms, nest & wires
   // --------------------------------------------------------------------------
-  const polesGroup = new THREE.Group();
+  const perchedBirdGeo = new THREE.BoxGeometry(0.11, 0.18, 0.08);
 
-  function addUtilityPole(x, yBase, z, scale, hasNest = false) {
+  function addUtilityPole(group, x, yBase, z, scale, hasNest = false) {
     const unit = new THREE.Group();
     unit.position.set(x, yBase, z);
     unit.scale.setScalar(scale);
 
-    const poleH = 7.6;
+    const poleH = 7.8;
     const leftPole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, poleH, 8), darkSilhouetteMat);
-    leftPole.position.set(-0.75, poleH * 0.5, 0);
+    leftPole.position.set(-0.78, poleH * 0.5, 0);
     unit.add(leftPole);
 
     const rightPole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, poleH, 8), darkSilhouetteMat);
-    rightPole.position.set(0.75, poleH * 0.5, 0);
+    rightPole.position.set(0.78, poleH * 0.5, 0);
     unit.add(rightPole);
 
-    // Double horizontal crossbars
-    const bar1 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.09, 0.09), darkSilhouetteMat);
+    const bar1 = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.09, 0.09), darkSilhouetteMat);
     bar1.position.set(0, poleH - 0.85, 0);
     unit.add(bar1);
 
-    const bar2 = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 0.08), darkSilhouetteMat);
+    const bar2 = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.08, 0.08), darkSilhouetteMat);
     bar2.position.set(0, poleH - 1.75, 0);
     unit.add(bar2);
 
-    // Insulator pins & perched birds on crossbars
-    for (let p = -1.3; p <= 1.3; p += 0.52) {
+    for (let p = -1.35; p <= 1.35; p += 0.54) {
       const pin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.06), darkSilhouetteMat);
       pin.position.set(p, poleH - 0.72, 0);
       unit.add(pin);
     }
 
-    // Large Osprey / Stork Nest perched atop the right pole (Screenshot 4 & 5 signature landmark!)
     if (hasNest) {
       const nest = new THREE.Group();
-      nest.position.set(0.75, poleH - 0.72, 0);
-      for (let n = 0; n < 12; n++) {
+      nest.position.set(0.78, poleH - 0.72, 0);
+      for (let n = 0; n < 14; n++) {
         const twig = new THREE.Mesh(
-          new THREE.DodecahedronGeometry(0.28 + (n % 3) * 0.09, 0),
+          new THREE.DodecahedronGeometry(0.30 + (n % 3) * 0.10, 0),
           darkSilhouetteMat
         );
-        twig.scale.set(1.65, 0.72, 1.2);
+        twig.scale.set(1.7, 0.75, 1.2);
         twig.position.set(
-          Math.sin(n * 2.1) * 0.28,
-          Math.cos(n * 1.7) * 0.14,
+          Math.sin(n * 2.1) * 0.30,
+          Math.cos(n * 1.7) * 0.15,
           Math.sin(n * 3.1) * 0.18
         );
         nest.add(twig);
@@ -834,49 +978,66 @@ function createDocumentaryForeground() {
       unit.add(nest);
     }
 
-    polesGroup.add(unit);
+    group.add(unit);
     return new THREE.Vector3(x, yBase + (poleH - 0.9) * scale, z);
   }
 
-  // Placed at X = 37..66 so they are completely off-screen in Act 1 (camera X=0, max visible X=20),
-  // and enter the bottom-right frame during Acts 4 & 5 (camera X=42..46)!
-  const pt1 = addUtilityPole(37.5, -14.8, 40.0, 0.45, false);
-  const pt2 = addUtilityPole(43.5, -14.6, 40.0, 0.55, false);
-  const pt3 = addUtilityPole(50.2, -14.2, 40.0, 0.68, false);
-  const pt4 = addUtilityPole(59.8, -14.0, 40.0, 0.95, true);  // Prominent foreground H-pole with bird nest!
-  const pt5 = addUtilityPole(66.5, -13.8, 40.0, 1.00, false);
+  function connectPolesWithPerchedBirds(group, poleTops, minDenseIndex = 1) {
+    for (let i = 0; i < poleTops.length - 1; i++) {
+      const a = poleTops[i];
+      const b = poleTops[i + 1];
 
-  const poleTops = [pt1, pt2, pt3, pt4, pt5];
-  const perchedBirdGeo = new THREE.BoxGeometry(0.09, 0.15, 0.07);
+      [-0.85, 0.0, 0.85].forEach((offsetX, wIdx) => {
+        const pts = [];
+        const segs = 24;
+        for (let s = 0; s <= segs; s++) {
+          const t = s / segs;
+          const wx = a.x + offsetX * 0.4 + (b.x + offsetX * 0.7 - (a.x + offsetX * 0.4)) * t;
+          const wz = a.z + (b.z - a.z) * t;
+          const sag = Math.sin(t * Math.PI) * (0.38 + i * 0.16);
+          const wy = a.y + (b.y - a.y) * t - sag - wIdx * 0.28;
+          pts.push(new THREE.Vector3(wx, wy, wz));
 
-  for (let i = 0; i < poleTops.length - 1; i++) {
-    const a = poleTops[i];
-    const b = poleTops[i + 1];
-
-    [-0.9, 0.0, 0.9].forEach((offsetX, wIdx) => {
-      const pts = [];
-      const segs = 22;
-      for (let s = 0; s <= segs; s++) {
-        const t = s / segs;
-        const wx = a.x + offsetX * 0.4 + (b.x + offsetX * 0.7 - (a.x + offsetX * 0.4)) * t;
-        const wz = a.z + (b.z - a.z) * t;
-        const sag = Math.sin(t * Math.PI) * (0.35 + i * 0.18);
-        const wy = a.y + (b.y - a.y) * t - sag - wIdx * 0.28;
-        pts.push(new THREE.Vector3(wx, wy, wz));
-
-        // Tiny birds perched in rows along the wires (Screenshot 4 & 5 bottom-right detail)
-        if (i >= 2 && s > 1 && s < segs - 1 && ((s + wIdx * 2) % 2 === 0)) {
-          const bird = new THREE.Mesh(perchedBirdGeo, darkSilhouetteMat);
-          bird.position.set(wx, wy + 0.08, wz);
-          polesGroup.add(bird);
+          if (i >= minDenseIndex && s > 1 && s < segs - 1 && ((s + wIdx * 2) % 2 === 0)) {
+            const bird = new THREE.Mesh(perchedBirdGeo, darkSilhouetteMat);
+            bird.position.set(wx, wy + 0.09, wz);
+            group.add(bird);
+          }
         }
-      }
-      const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
-      polesGroup.add(new THREE.Line(lineGeo, wireMat));
-    });
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+        group.add(new THREE.Line(lineGeo, wireMat));
+      });
+    }
   }
 
-  fgGroup.add(polesGroup);
+  // --------------------------------------------------------------------------
+  // STAGE 3 FOREGROUND (鯤鵬004.png, Cam X = 180.0):
+  // - Small distant pole tips at bottom-left-center (X = 173.4)
+  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = 194.5)
+  // --------------------------------------------------------------------------
+  const stage3Poles = new THREE.Group();
+  addUtilityPole(stage3Poles, 173.4, -14.9, 40.0, 0.50, false);
+  const s3_p1 = new THREE.Vector3(188.0, -11.6, 40.0);
+  const s3_p2 = addUtilityPole(stage3Poles, 194.5, -14.2, 40.0, 0.88, true); // Close H-pole with Nest in 鯤鵬004!
+  const s3_p3 = new THREE.Vector3(200.0, -9.2, 40.0);
+  connectPolesWithPerchedBirds(stage3Poles, [s3_p1, s3_p2, s3_p3], 0);
+  fgGroup.add(stage3Poles);
+
+  // --------------------------------------------------------------------------
+  // STAGE 4 FOREGROUND (鯤鵬005.png, Cam X = 240.0):
+  // - Full receding row of utility poles across the bottom (X = 233.0, 235.6, 238.6, 242.4)
+  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = 256.2)
+  // --------------------------------------------------------------------------
+  const stage4Poles = new THREE.Group();
+  const s4_p0 = addUtilityPole(stage4Poles, 233.0, -14.9, 40.0, 0.44, false);
+  const s4_p1 = addUtilityPole(stage4Poles, 235.6, -14.8, 40.0, 0.48, false);
+  const s4_p2 = addUtilityPole(stage4Poles, 238.6, -14.6, 40.0, 0.53, false);
+  const s4_p3 = addUtilityPole(stage4Poles, 242.4, -14.3, 40.0, 0.62, false);
+  const s4_p4 = addUtilityPole(stage4Poles, 256.2, -14.1, 40.0, 0.90, true); // Close H-pole with Nest in 鯤鵬005!
+  const s4_p5 = new THREE.Vector3(262.0, -9.0, 40.0);
+  connectPolesWithPerchedBirds(stage4Poles, [s4_p0, s4_p1, s4_p2, s4_p3, s4_p4, s4_p5], 3);
+  fgGroup.add(stage4Poles);
+
   scene.add(fgGroup);
   return fgGroup;
 }
@@ -998,7 +1159,7 @@ class MurmurationSoundscape {
 const soundscape = new MurmurationSoundscape();
 
 // ============================================================================
-// 6. UI Binding & Five-Act Director Synchronization
+// 6. UI Binding & Five-Keyframe Director Synchronization
 // ============================================================================
 const ui = {
   scrubber: document.getElementById('timeline-scrubber'),
@@ -1026,12 +1187,9 @@ const ui = {
   btnUiCollapse: document.getElementById('btn-ui-collapse')
 };
 
+// Map timeline t in [0, 1] to the closest of the 5 keyframes (0.00, 0.25, 0.50, 0.75, 1.00)
 function getStageIndexForT(t) {
-  if (t < 0.22) return 0;
-  if (t < 0.42) return 1;
-  if (t < 0.62) return 2;
-  if (t < 0.82) return 3;
-  return 4;
+  return Math.min(4, Math.max(0, Math.round(t * 4.0)));
 }
 
 function updateStageUI(t) {
@@ -1063,7 +1221,8 @@ function jumpToStage(stageIdx) {
   const stage = NARRATIVE_STAGES[stageIdx];
   if (!stage) return;
   state.targetTimeline = stage.targetT;
-  if (state.cameraMode === 'free') {
+  state.pauseTimer = 2.0; // Hold briefly on the selected keyframe once reached
+  if (state.cameraMode !== 'narrative') {
     state.cameraMode = 'narrative';
     ui.selectViewpoint.value = 'narrative';
   }
@@ -1079,7 +1238,9 @@ ui.btnPlayPause.addEventListener('click', () => {
 ui.scrubber.addEventListener('input', (e) => {
   state.timeline = parseFloat(e.target.value);
   state.targetTimeline = null;
+  state.pauseTimer = 0;
   murmurationUniforms.uMorph.value = state.timeline;
+  skyMaterial.uniforms.uMorph.value = state.timeline;
   updateStageUI(state.timeline);
 });
 
@@ -1127,6 +1288,9 @@ ui.sliderWind.addEventListener('input', (e) => {
 
 ui.selectViewpoint.addEventListener('change', (e) => {
   state.cameraMode = e.target.value;
+  if (CAMERA_PRESETS[state.cameraMode]) {
+    state.targetTimeline = CAMERA_PRESETS[state.cameraMode].snapT;
+  }
 });
 
 ui.btnCameraReset.addEventListener('click', () => {
@@ -1171,22 +1335,29 @@ window.addEventListener('resize', () => {
 });
 
 // ============================================================================
-// 7. Continuous Narrative Camera Interpolation & Animation Loop
+// 7. Synchronized 5-Stage Camera Interpolation & Animation Loop
 // ============================================================================
 const tempCamPos = new THREE.Vector3();
 const tempLookAt = new THREE.Vector3();
 
+function smoothstep(edge0, edge1, x) {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
 function computeNarrativeCamera(t, outPos, outLook) {
-  const scaled = Math.max(0, Math.min(0.9999, t)) * (NARRATIVE_STAGES.length - 1);
+  // Uses the exact same piecewise Hermite curve as the vertex shader so camera X
+  // stays 100% locked to the flock center across all 5 keyframes!
+  const scaled = Math.max(0, Math.min(0.9999, t)) * 4.0;
   const idx = Math.floor(scaled);
   const frac = scaled - idx;
-  const smoothFrac = frac * frac * (3.0 - 2.0 * frac);
+  const s = smoothstep(0.08, 0.92, frac);
 
   const stageA = NARRATIVE_STAGES[idx];
   const stageB = NARRATIVE_STAGES[Math.min(idx + 1, NARRATIVE_STAGES.length - 1)];
 
-  outPos.lerpVectors(stageA.camPos, stageB.camPos, smoothFrac);
-  outLook.lerpVectors(stageA.camLookAt, stageB.camLookAt, smoothFrac);
+  outPos.lerpVectors(stageA.camPos, stageB.camPos, s);
+  outLook.lerpVectors(stageA.camLookAt, stageB.camLookAt, s);
 }
 
 const clock = new THREE.Clock();
@@ -1199,41 +1370,65 @@ function animate() {
 
   if (state.targetTimeline !== null) {
     const diff = state.targetTimeline - state.timeline;
-    if (Math.abs(diff) < 0.002) {
+    if (Math.abs(diff) < 0.0015) {
       state.timeline = state.targetTimeline;
       state.targetTimeline = null;
     } else {
-      state.timeline += diff * Math.min(1.0, dt * 4.5);
+      state.timeline += diff * Math.min(1.0, dt * 5.0);
     }
     updateStageUI(state.timeline);
   } else if (state.isPlaying) {
-    state.timeline += dt * state.playSpeed;
-    if (state.timeline > 1.0) {
-      state.timeline = 0.0;
+    if (state.pauseTimer > 0) {
+      state.pauseTimer -= dt;
+    } else {
+      const prevT = state.timeline;
+      state.timeline += dt * state.playSpeed;
+
+      // Pause briefly (1.4s) when crossing each keyframe (0.25, 0.50, 0.75, 1.00)
+      // so the viewer can clearly admire each of the 5 reference compositions!
+      const keyframes = [0.25, 0.50, 0.75, 1.00];
+      for (const kf of keyframes) {
+        if (prevT < kf && state.timeline >= kf) {
+          state.timeline = kf;
+          state.pauseTimer = 1.6;
+          break;
+        }
+      }
+
+      if (prevT === 1.00 && state.timeline > 1.00) {
+        state.timeline = 0.00;
+        state.pauseTimer = 1.8;
+        // Snap camera back to Stage 0 cleanly on loop reset
+        if (state.cameraMode === 'narrative') {
+          camera.position.copy(NARRATIVE_STAGES[0].camPos);
+          controls.target.copy(NARRATIVE_STAGES[0].camLookAt);
+        }
+      }
+      updateStageUI(state.timeline);
     }
-    updateStageUI(state.timeline);
   }
 
   murmurationUniforms.uTime.value = elapsed;
   murmurationUniforms.uMorph.value = state.timeline;
   skyMaterial.uniforms.uTime.value = elapsed;
+  skyMaterial.uniforms.uMorph.value = state.timeline;
 
-  const breathX = Math.sin(elapsed * 0.5) * 0.15;
-  const breathY = Math.cos(elapsed * 0.38) * 0.10;
+  const breathX = Math.sin(elapsed * 0.5) * 0.12;
+  const breathY = Math.cos(elapsed * 0.38) * 0.08;
 
   if (state.cameraMode === 'narrative') {
     computeNarrativeCamera(state.timeline, tempCamPos, tempLookAt);
     tempCamPos.x += breathX;
     tempCamPos.y += breathY;
-    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 3.0));
-    controls.target.lerp(tempLookAt, Math.min(1.0, dt * 3.0));
+    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 6.0));
+    controls.target.lerp(tempLookAt, Math.min(1.0, dt * 6.0));
   } else if (CAMERA_PRESETS[state.cameraMode]) {
     const preset = CAMERA_PRESETS[state.cameraMode];
     tempCamPos.copy(preset.pos);
     tempCamPos.x += breathX;
     tempCamPos.y += breathY;
-    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 3.5));
-    controls.target.lerp(preset.target, Math.min(1.0, dt * 3.5));
+    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 4.5));
+    controls.target.lerp(preset.target, Math.min(1.0, dt * 4.5));
   }
 
   controls.update();
@@ -1241,7 +1436,6 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Initialize UI readouts
 ui.particleReadout.textContent = '110,000 羽';
 ui.valDensity.textContent = '110,000';
 updateStageUI(state.timeline);
