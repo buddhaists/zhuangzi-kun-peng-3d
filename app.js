@@ -21,7 +21,7 @@ const NARRATIVE_STAGES = [
     refImage: '鯤鵬001.png',
     shortTitle: '壹 · 北冥潛鯤 (001)',
     verse: '北冥有魚，其名爲鯤。',
-    caption: '【對應 鯤鵬001】遠海觀景涼亭外，十萬飛鳥凝聚成巨鯤之形：背脊深邃平緩、魚腹飽滿圓潤、尾翼流線延展，懸浮於海天之間。',
+    caption: '【對應 鯤鵬001】遠海觀景涼亭外，十萬飛鳥凝聚成巨鯤之形：魚吻朝左破風前行，背脊深邃平緩、魚腹飽滿圓潤、尾翼流線延展。',
     targetT: 0.00,
     camPos: new THREE.Vector3(0.0, 0.0, 82.0),
     camLookAt: new THREE.Vector3(0.0, 0.0, 0.0)
@@ -31,40 +31,40 @@ const NARRATIVE_STAGES = [
     refImage: '鯤鵬002.png',
     shortTitle: '貳 · 幾千里也 (002)',
     verse: '鯤之大，不知其幾千里也。',
-    caption: '【對應 鯤鵬002】長焦推進特寫，巨鯤修長身軀橫貫畫面，左側銳利魚吻刺破冷風，內部鳥群如海流般呈斜向波紋層層延展。',
+    caption: '【對應 鯤鵬002】巨鯤迎風向前疾馳推進，修長身軀橫貫天際，左側銳利魚吻刺破冷風，內部鳥群如海流般向後奔涌、層層幻化。',
     targetT: 0.25,
-    camPos: new THREE.Vector3(60.0, 0.0, 82.0),
-    camLookAt: new THREE.Vector3(60.0, 0.0, 0.0)
+    camPos: new THREE.Vector3(-60.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(-60.0, 0.0, 0.0)
   },
   {
     id: 2,
     refImage: '鯤鵬003.png',
     shortTitle: '叁 · 化而爲鳥 (003)',
     verse: '化而爲鳥，其名爲鵬。',
-    caption: '【對應 鯤鵬003】巨鯤腹尾收束壓平，轉化為一道橫跨天際的流線型波浪翼帶，下緣凝集如墨，上方散逸出淡雅羽霧，底部隱現遠方林梢。',
+    caption: '【對應 鯤鵬003】向前飛馳中巨鯤腹尾收束壓平、翻湧蛻變為橫跨天際的流線型波浪翼帶，下緣凝集如墨，上方散逸出萬千羽霧。',
     targetT: 0.50,
-    camPos: new THREE.Vector3(120.0, 0.0, 82.0),
-    camLookAt: new THREE.Vector3(120.0, 0.0, 0.0)
+    camPos: new THREE.Vector3(-120.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(-120.0, 0.0, 0.0)
   },
   {
     id: 3,
     refImage: '鯤鵬004.png',
     shortTitle: '肆 · 鵬之背 (004)',
     verse: '鵬之背，不知其幾千里也；',
-    caption: '【對應 鯤鵬004】大鵬左翼尖直刺左方天際，寬廣厚重的鵬背與腹部向右下電線桿與鳥巢上方傾瀉而下，氣勢遮天蔽日。',
+    caption: '【對應 鯤鵬004】大鵬展翅向前破空，左翼尖直刺前方天際，寬廣厚重的鵬背與腹部隨氣流劇烈鼓盪傾瀉，氣勢遮天蔽日。',
     targetT: 0.75,
-    camPos: new THREE.Vector3(180.0, 0.0, 82.0),
-    camLookAt: new THREE.Vector3(180.0, 0.0, 0.0)
+    camPos: new THREE.Vector3(-180.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(-180.0, 0.0, 0.0)
   },
   {
     id: 4,
     refImage: '鯤鵬005.png',
     shortTitle: '伍 · 垂天之雲 (005)',
     verse: '怒而飛，其翼若垂天之雲。',
-    caption: '【對應 鯤鵬005】大鵬乘風怒飛，長達千里的巨翼向右上揚起，下方分化為三層階梯狀的垂天雲翼，與成排電線桿上渺小的停棲鳥群相映。',
+    caption: '【對應 鯤鵬005】大鵬乘風向前怒飛，長達千里的巨翼昂揚舒展，下方翻湧分化為三層階梯狀的垂天雲翼，姿態萬千。',
     targetT: 1.00,
-    camPos: new THREE.Vector3(240.0, 0.0, 82.0),
-    camLookAt: new THREE.Vector3(240.0, 0.0, 0.0)
+    camPos: new THREE.Vector3(-240.0, 0.0, 82.0),
+    camLookAt: new THREE.Vector3(-240.0, 0.0, 0.0)
   }
 ];
 
@@ -75,13 +75,13 @@ const CAMERA_PRESETS = {
     snapT: 0.00
   },
   telephoto: {
-    pos: new THREE.Vector3(60.0, 0.0, 82.0),
-    target: new THREE.Vector3(60.0, 0.0, 0.0),
+    pos: new THREE.Vector3(-60.0, 0.0, 82.0),
+    target: new THREE.Vector3(-60.0, 0.0, 0.0),
     snapT: 0.25
   },
   poles: {
-    pos: new THREE.Vector3(240.0, 0.0, 82.0),
-    target: new THREE.Vector3(240.0, 0.0, 0.0),
+    pos: new THREE.Vector3(-240.0, 0.0, 82.0),
+    target: new THREE.Vector3(-240.0, 0.0, 0.0),
     snapT: 1.00
   }
 };
@@ -95,8 +95,8 @@ const state = {
   timeline: 0.00,         // Starts strictly at Stage 0 (鯤鵬001.png)
   targetTimeline: null,
   isPlaying: true,
-  playSpeed: 0.022,       // Smoothly progresses 0.00 -> 0.25 -> 0.50 -> 0.75 -> 1.00
-  pauseTimer: 1.8,        // Brief pause on 鯤鵬001 at start so user sees exact 001 frame immediately
+  playSpeed: 0.032,       // Continuous forward flight speed across 0.00 -> 1.00
+  pauseTimer: 0.6,        // Brief initial hold before continuous forward flight
   turbulence: 1.0,
   densityRatio: 1.0,
   windSpeed: 1.0,
@@ -221,9 +221,10 @@ function createAtmosphericSky() {
         col = mix(col, upperSky, smoothstep(0.04, 0.32, y));
 
         // Soft stratus cloud patches in the upper sky (prominent in 鯤鵬001, 002, 003)
-        vec2 cloudUV = vec2(dir.x * 3.0 + uTime * 0.012 * uWindSpeed, dir.y * 6.2);
+        // Drift toward +X relative to view so the left-facing Kun-Peng visibly flies forward into the headwind
+        vec2 cloudUV = vec2(dir.x * 3.0 - uTime * 0.024 * uWindSpeed - uMorph * 1.4, dir.y * 6.2);
         float c1 = fbm(cloudUV);
-        float c2 = fbm(cloudUV * 1.85 - vec2(uTime * 0.008, 1.7));
+        float c2 = fbm(cloudUV * 1.85 + vec2(uTime * 0.014, -1.7));
         float cloudPatch = smoothstep(0.45, 0.75, c1 * 0.65 + c2 * 0.35);
 
         // In 鯤鵬003 (uMorph ~ 0.5), upper clouds are slightly more pronounced; in 004/005 sky is smoother
@@ -313,12 +314,13 @@ const KUN1 = (() => {
  * coherent and organic (no chaotic scrambling), each bird `i` is assigned normalized
  * material coordinates `(u, v, w, role)` that map smoothly across all 5 keyframes!
  *
- * Local X coordinate is centered relative to each stage's camera X:
- * - Stage 0 (鯤鵬001): center X =   0.0
- * - Stage 1 (鯤鵬002): center X =  35.0
- * - Stage 2 (鯤鵬003): center X =  70.0
- * - Stage 3 (鯤鵬004): center X = 105.0
- * - Stage 4 (鯤鵬005): center X = 135.0
+ * Since the Kun/Peng head and leading wingtip point LEFT (-X), the flock flies FORWARD
+ * toward -X across the 5 stages:
+ * - Stage 0 (鯤鵬001): center X =    0.0
+ * - Stage 1 (鯤鵬002): center X =  -60.0
+ * - Stage 2 (鯤鵬003): center X = -120.0
+ * - Stage 3 (鯤鵬004): center X = -180.0
+ * - Stage 4 (鯤鵬005): center X = -240.0
  */
 function buildFiveStageGeometry(count) {
   const geometry = new THREE.BufferGeometry();
@@ -408,14 +410,14 @@ function buildFiveStageGeometry(count) {
     pos1[i3 + 2] = z1;
 
     // ========================================================================
-    // KEYFRAME 2: 鯤鵬002.png (Center X = 60.0)
+    // KEYFRAME 2: 鯤鵬002.png (Center X = -60.0)
     // Telephoto close-up of elongated Kun whale spanning from X_local = -35.5 (left tip)
     // right off the right edge of the frame (X_local = +39.0)!
     // Prominent dark diagonal density bands inside, dark lower belly band on the right,
     // and delicate upper dorsal mist wisps trailing to the right.
     // ========================================================================
     let x2, y2, z2;
-    const cx2 = 60.0;
+    const cx2 = -60.0;
 
     if (isScout1 || isScout2) {
       // Tiny bird speck in far upper-right of 鯤鵬002
@@ -470,13 +472,13 @@ function buildFiveStageGeometry(count) {
     pos2[i3 + 2] = z2;
 
     // ========================================================================
-    // KEYFRAME 3: 鯤鵬003.png (Center X = 120.0)
+    // KEYFRAME 3: 鯤鵬003.png (Center X = -120.0)
     // "化而爲鳥，其名爲鵬" — The whale flattens and elongates into a sleek, undulating
     // wing-like ribbon spanning from lx = -30.5 (rounded-pointed left head) all the way
     // to the right edge (lx = +39.5).
     // ========================================================================
     let x3, y3, z3;
-    const cx3 = 120.0;
+    const cx3 = -120.0;
 
     if (isScout1 || isScout2) {
       x3 = cx3 - 5.2; y3 = 1.9; z3 = 1.0;
@@ -519,11 +521,11 @@ function buildFiveStageGeometry(count) {
     pos3[i3 + 2] = z3;
 
     // ========================================================================
-    // KEYFRAME 4: 鯤鵬004.png (Center X = 180.0)
+    // KEYFRAME 4: 鯤鵬004.png (Center X = -180.0)
     // "鵬之背，不知其幾千里也" — Massive sweeping Peng wing & deep descending body!
     // ========================================================================
     let x4, y4, z4;
-    const cx4 = 180.0;
+    const cx4 = -180.0;
 
     if (isScout1 || isScout2) {
       x4 = cx4 - 7.5; y4 = -7.8; z4 = 2.0;
@@ -568,11 +570,11 @@ function buildFiveStageGeometry(count) {
     pos4[i3 + 2] = z4;
 
     // ========================================================================
-    // KEYFRAME 5: 鯤鵬005.png (Center X = 240.0)
+    // KEYFRAME 5: 鯤鵬005.png (Center X = -240.0)
     // "怒而飛，其翼若垂天之雲" — The iconic three-tiered cloud-wing Peng formation!
     // ========================================================================
     let x5, y5, z5;
-    const cx5 = 240.0;
+    const cx5 = -240.0;
 
     if (isScout1) {
       // Prominent dark lone bird high in upper-right sky of 鯤鵬005!
@@ -718,18 +720,19 @@ const murmurationMaterial = new THREE.ShaderMaterial({
     }
 
     // Piecewise smooth interpolation across the 5 exact keyframes:
-    // t = 0.00 -> aPos1 (鯤鵬001)
-    // t = 0.25 -> aPos2 (鯤鵬002)
-    // t = 0.50 -> aPos3 (鯤鵬003)
-    // t = 0.75 -> aPos4 (鯤鵬004)
-    // t = 1.00 -> aPos5 (鯤鵬005)
-    vec3 sampleFiveStagePosition(float t, out float transitionBell) {
+    // t = 0.00 -> aPos1 (鯤鵬001, center X =    0.0)
+    // t = 0.25 -> aPos2 (鯤鵬002, center X =  -60.0)
+    // t = 0.50 -> aPos3 (鯤鵬003, center X = -120.0)
+    // t = 0.75 -> aPos4 (鯤鵬004, center X = -180.0)
+    // t = 1.00 -> aPos5 (鯤鵬005, center X = -240.0)
+    vec3 sampleFiveStagePosition(float t, out float transitionBell, out float centerX) {
       float scaled = clamp(t, 0.0, 1.0) * 4.0;
       float seg = floor(min(scaled, 3.9999));
       float frac = scaled - seg;
-      // Smooth Hermite interpolation with a plateau near each keyframe so each reference photo shape holds clearly
-      float s = smoothstep(0.08, 0.92, frac);
+      // Continuous smooth cubic curve with active transition bell between stages
+      float s = smoothstep(0.03, 0.97, frac);
       transitionBell = sin(s * 3.14159265);
+      centerX = -(seg + s) * 60.0;
 
       if (seg < 0.5) {
         return mix(aPos1, aPos2, s);
@@ -750,31 +753,54 @@ const murmurationMaterial = new THREE.ShaderMaterial({
 
       float densityFade = smoothstep(uDensityLimit, uDensityLimit - 0.08, role * 0.92);
 
-      // Slight head-to-tail propagation delay so the flock flows organically between keyframes
-      float xNorm = clamp((aPos1.x + 26.0) / 58.0, 0.0, 1.0);
-      float delayedMorph = clamp(uMorph + (0.5 - xNorm) * 0.025 * sin(uMorph * 3.14159265), 0.0, 1.0);
+      // Head-to-tail propagation: xNorm = 0 at leading left snout/wingtip, 1 at trailing right tail
+      // The leading head initiates every posture & shape transformation first, rippling backward to the tail!
+      float xNorm = clamp((aPos1.x + 24.2) / 61.2, 0.0, 1.0);
+      float leadLag = (0.35 - xNorm) * 0.048 * sin(uMorph * 3.14159265);
+      float delayedMorph = clamp(uMorph + leadLag, 0.0, 1.0);
 
       float transBell = 0.0;
-      vec3 pos = sampleFiveStagePosition(delayedMorph, transBell);
+      float stageCenterX = 0.0;
+      vec3 pos = sampleFiveStagePosition(delayedMorph, transBell, stageCenterX);
 
-      // Bounded organic murmuration flow (tight at keyframes so silhouette matches 001~005 photos,
-      // slightly livelier during transitions between stages)
-      float tFlow = uTime * 0.42 * uWindSpeed;
-      vec3 swirl = curlSwirl(pos * 0.11, tFlow);
-      float baseDisplacement = (0.24 + 0.35 * smoothstep(0.55, 1.0, role) + transBell * 0.55) * uTurbulence;
+      // Local coordinate relative to the current flock center (which moves forward from 0 to -240)
+      float localX = pos.x - stageCenterX;
 
       // Keep lone scout birds at their exact composition coordinates
       float scoutLock = step(scale, 3.0);
-      pos += swirl * baseDisplacement * scoutLock;
 
-      // Subtle living breathing wave along the flock
-      float bodyWave = sin(pos.x * 0.11 - uTime * 1.25 * uWindSpeed) * 0.12 * scoutLock;
-      pos.y += bodyWave;
+      // 1. Dynamic 3D Murmuration Swirl & Metamorphosis Billowing ("變化萬千")
+      // During forward flight and stage transitions, the flock billows with multi-layered vortex waves
+      float tFlow = uTime * 0.58 * uWindSpeed;
+      vec3 swirl = curlSwirl(vec3(localX, pos.y, pos.z) * 0.095 + vec3(tFlow * 1.4, 0.0, 0.0), tFlow);
+      vec3 fineSwirl = curlSwirl(vec3(localX, pos.y, pos.z) * 0.24 + vec3(tFlow * 2.2, tFlow * 0.5, 0.0), tFlow * 1.7);
+      float baseDisplacement = (0.30 + 0.45 * smoothstep(0.45, 1.0, role) + transBell * 1.35) * uTurbulence;
+      pos += (swirl * 0.75 + fineSwirl * 0.25) * baseDisplacement * scoutLock;
 
-      // Individual wing-flapping oscillation
-      float flapFreq = 10.0 + speed * 5.0;
-      vFlapPhase = uTime * flapFreq + phase * 6.2831;
-      pos.y += sin(vFlapPhase) * 0.04;
+      // 2. Forward-Flight Posture Undulation (Traveling wave from leading left tip toward trailing right tail)
+      // Notice the "+" sign on uTime: phase propagates toward +X (from left head/wingtip to right tail),
+      // propelling the Kun/Peng forward toward the left (-X)!
+      float travelPhase = localX * 0.14 + uTime * 3.2 * uWindSpeed;
+      float tailAmp = smoothstep(-28.0, 36.0, localX); // Subtle at sharp leading snout, sweeping at tail & wings
+      float undulationY = sin(travelPhase) * (0.28 + 1.15 * tailAmp + transBell * 0.85);
+      float undulationZ = cos(travelPhase * 0.85 + phase * 0.3) * (0.35 + 1.45 * tailAmp + transBell * 1.10);
+
+      // 3. Wing-Spread & Banking Roll Posture during Kun -> Peng Transformation
+      // As it transforms into the Peng (uMorph > 0.20), add sweeping wing-beat surge and banking twist
+      float pengFactor = smoothstep(0.20, 0.85, uMorph);
+      float wingSpanFactor = clamp(abs(localX) / 36.0, 0.0, 1.2);
+      float mightyWingBeat = sin(uTime * 2.1 * uWindSpeed - wingSpanFactor * 2.2) * (0.45 + 1.35 * wingSpanFactor) * pengFactor;
+      float spiralTwist = sin(uMorph * 12.56637 + xNorm * 4.5 + uTime * 2.4 * uWindSpeed) * transBell * 1.25;
+
+      pos.y += (undulationY + mightyWingBeat + spiralTwist * 0.65) * uTurbulence * scoutLock;
+      pos.z += (undulationZ + spiralTwist * 1.15) * uTurbulence * scoutLock;
+      // Forward surge oscillation along X
+      pos.x += cos(travelPhase + role * 3.14) * (0.22 + transBell * 0.65) * uTurbulence * scoutLock;
+
+      // 4. Individual bird wing-flapping oscillation
+      float flapFreq = 11.0 + speed * 5.5;
+      vFlapPhase = uTime * flapFreq + phase * 6.2831 - localX * 0.15;
+      pos.y += sin(vFlapPhase) * 0.05;
 
       vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
@@ -782,15 +808,16 @@ const murmurationMaterial = new THREE.ShaderMaterial({
       float dist = max(-mvPosition.z, 10.0);
       gl_PointSize = (205.0 / dist) * scale * uPixelRatio;
 
-      // Internal Diagonal Density Striations (recreates the dark/light undulating bands inside 001~005)
-      float striation = sin(pos.x * 0.52 + pos.y * 1.15 - tFlow * 2.2) * 0.5 + 0.5;
-      float noiseWave = noise3(pos * 0.18 - vec3(tFlow * 1.4, 0.0, 0.0));
-      vShade = clamp(striation * 0.45 + noiseWave * 0.55, 0.0, 1.0);
+      // Internal Diagonal Density Striations flowing from leading head (-X) to trailing tail (+X)
+      // Using "+ tFlow" so the density waves flow backward (+X) across the body as the Kun-Peng flies forward (-X)!
+      float striation = sin(localX * 0.52 + pos.y * 1.15 + tFlow * 4.2) * 0.5 + 0.5;
+      float noiseWave = noise3(vec3(localX, pos.y, pos.z) * 0.18 + vec3(tFlow * 2.6, 0.0, 0.0));
+      vShade = clamp(striation * 0.48 + noiseWave * 0.52, 0.0, 1.0);
 
-      vTilt = sin(phase + uTime * 1.2 + pos.x * 0.06) * 0.38;
+      vTilt = sin(phase + uTime * 1.8 * uWindSpeed + localX * 0.08) * (0.38 + transBell * 0.25);
 
       // Rich charcoal opacity in core & ridges; soft mist dissipation at trailing edges
-      float baseAlpha = mix(0.60, 0.16, smoothstep(0.42, 0.98, role));
+      float baseAlpha = mix(0.62, 0.16, smoothstep(0.42, 0.98, role));
       if (scale > 3.0) baseAlpha = 0.92; // Make the lone scout birds crisp and clearly visible
       vAlpha = baseAlpha * densityFade;
     }
@@ -842,23 +869,9 @@ scene.add(murmurationPoints);
 // 4. Stage-Aligned Documentary Foreground Landmarks (鯤鵬001 ~ 鯤鵬005)
 // ============================================================================
 /**
- * Places foreground landmarks at Z = 40 so they align 1:1 with each stage's camera center:
- * - Stage 0 (鯤鵬001, cam X = 0):
- *   - Coastal Viewing Pavilion at X = +18.6, Y = -7.85 (bottom-right corner)
- *   - Tiny coastal treetop scrub at X = +1..+16, Y = -11.35
- * - Stage 1 (鯤鵬002, cam X = 35):
- *   - Pure open sky & misty horizon (no foreground structures, matching 鯤鵬002!)
- * - Stage 2 (鯤鵬003, cam X = 70):
- *   - Very thin distant antenna/pole tips at X = 60.5, 63.8 and tiny treetop scrub along
- *     the bottom-right edge (X = 71..84, Y = -11.2), matching the bottom edge of 鯤鵬003!
- * - Stage 3 (鯤鵬004, cam X = 105):
- *   - Distant pole tips at bottom-center-left (X = 98.2, 99.6)
- *   - Prominent double H-frame utility pole with large Osprey Nest & perched birds on sagging wires
- *     at bottom-right (X = 117..124), matching 鯤鵬004!
- * - Stage 4 (鯤鵬005, cam X = 135):
- *   - Full receding row of open-field utility poles from center-bottom (X = 128, 131, 134, 138)
- *     to the large H-frame utility pole with the Osprey Nest and rows of perched starlings
- *     on the catenary power lines at bottom-right (X = 149..154), matching 鯤鵬005!
+ * Places foreground landmarks at Z = 40 so they align 1:1 with each stage's forward-moving camera center
+ * (Cam X = 0 -> -60 -> -120 -> -180 -> -240). As the Kun-Peng flies forward toward the left (-X),
+ * foreground landmarks pass naturally beneath it from left to right!
  */
 function createDocumentaryForeground() {
   const fgGroup = new THREE.Group();
@@ -968,8 +981,8 @@ function createDocumentaryForeground() {
 
   fgGroup.add(pavilion);
 
-  // Subtle bottom treetop tips for Stage 0 (X = 1..15) and Stage 2 (鯤鵬003, Cam X = 120, X = 120..135)
-  [1.0, 120.5].forEach((baseX) => {
+  // Subtle bottom treetop tips for Stage 0 (Cam X = 0, X = 1..15) and Stage 2 (鯤鵬003, Cam X = -120, X = -119.5..-105)
+  [1.0, -119.5].forEach((baseX) => {
     for (let k = 0; k < 34; k++) {
       const tx = baseX + k * 0.45 + (Math.random() - 0.5) * 0.2;
       const ty = -11.32 + Math.sin(k * 0.7) * 0.12;
@@ -983,8 +996,8 @@ function createDocumentaryForeground() {
     }
   });
 
-  // Two tiny distant thin mast/pole tips visible at the bottom-left of 鯤鵬003 (Cam X = 120)
-  [111.2, 115.0].forEach((px, idx) => {
+  // Two tiny distant thin mast/pole tips visible at the bottom-left of 鯤鵬003 (Cam X = -120)
+  [-128.8, -125.0].forEach((px, idx) => {
     const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.2, 6), darkSilhouetteMat);
     mast.position.set(px, -11.1, 40.0);
     fgGroup.add(mast);
@@ -1080,30 +1093,30 @@ function createDocumentaryForeground() {
   }
 
   // --------------------------------------------------------------------------
-  // STAGE 3 FOREGROUND (鯤鵬004.png, Cam X = 180.0):
-  // - Small distant pole tips at bottom-left-center (X = 173.4)
-  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = 194.5)
+  // STAGE 3 FOREGROUND (鯤鵬004.png, Cam X = -180.0):
+  // - Small distant pole tips at bottom-left-center (X = -186.6)
+  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = -165.5)
   // --------------------------------------------------------------------------
   const stage3Poles = new THREE.Group();
-  addUtilityPole(stage3Poles, 173.4, -14.9, 40.0, 0.50, false);
-  const s3_p1 = new THREE.Vector3(188.0, -11.6, 40.0);
-  const s3_p2 = addUtilityPole(stage3Poles, 194.5, -14.2, 40.0, 0.88, true); // Close H-pole with Nest in 鯤鵬004!
-  const s3_p3 = new THREE.Vector3(200.0, -9.2, 40.0);
+  addUtilityPole(stage3Poles, -186.6, -14.9, 40.0, 0.50, false);
+  const s3_p1 = new THREE.Vector3(-172.0, -11.6, 40.0);
+  const s3_p2 = addUtilityPole(stage3Poles, -165.5, -14.2, 40.0, 0.88, true); // Close H-pole with Nest in 鯤鵬004!
+  const s3_p3 = new THREE.Vector3(-160.0, -9.2, 40.0);
   connectPolesWithPerchedBirds(stage3Poles, [s3_p1, s3_p2, s3_p3], 0);
   fgGroup.add(stage3Poles);
 
   // --------------------------------------------------------------------------
-  // STAGE 4 FOREGROUND (鯤鵬005.png, Cam X = 240.0):
-  // - Full receding row of utility poles across the bottom (X = 233.0, 235.6, 238.6, 242.4)
-  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = 256.2)
+  // STAGE 4 FOREGROUND (鯤鵬005.png, Cam X = -240.0):
+  // - Full receding row of utility poles across the bottom (X = -247.0, -244.4, -241.4, -237.6)
+  // - Prominent close H-frame pole with Osprey Nest & perched bird wires at bottom-right (X = -223.8)
   // --------------------------------------------------------------------------
   const stage4Poles = new THREE.Group();
-  const s4_p0 = addUtilityPole(stage4Poles, 233.0, -14.9, 40.0, 0.44, false);
-  const s4_p1 = addUtilityPole(stage4Poles, 235.6, -14.8, 40.0, 0.48, false);
-  const s4_p2 = addUtilityPole(stage4Poles, 238.6, -14.6, 40.0, 0.53, false);
-  const s4_p3 = addUtilityPole(stage4Poles, 242.4, -14.3, 40.0, 0.62, false);
-  const s4_p4 = addUtilityPole(stage4Poles, 256.2, -14.1, 40.0, 0.90, true); // Close H-pole with Nest in 鯤鵬005!
-  const s4_p5 = new THREE.Vector3(262.0, -9.0, 40.0);
+  const s4_p0 = addUtilityPole(stage4Poles, -247.0, -14.9, 40.0, 0.44, false);
+  const s4_p1 = addUtilityPole(stage4Poles, -244.4, -14.8, 40.0, 0.48, false);
+  const s4_p2 = addUtilityPole(stage4Poles, -241.4, -14.6, 40.0, 0.53, false);
+  const s4_p3 = addUtilityPole(stage4Poles, -237.6, -14.3, 40.0, 0.62, false);
+  const s4_p4 = addUtilityPole(stage4Poles, -223.8, -14.1, 40.0, 0.90, true); // Close H-pole with Nest in 鯤鵬005!
+  const s4_p5 = new THREE.Vector3(-218.0, -9.0, 40.0);
   connectPolesWithPerchedBirds(stage4Poles, [s4_p0, s4_p1, s4_p2, s4_p3, s4_p4, s4_p5], 3);
   fgGroup.add(stage4Poles);
 
@@ -1299,7 +1312,7 @@ function jumpToStage(stageIdx) {
   const stage = NARRATIVE_STAGES[stageIdx];
   if (!stage) return;
   state.targetTimeline = stage.targetT;
-  state.pauseTimer = 2.0; // Hold briefly on the selected keyframe once reached
+  state.pauseTimer = 1.2; // Hold briefly when user explicitly clicks a stage tab
   if (state.cameraMode !== 'narrative') {
     state.cameraMode = 'narrative';
     ui.selectViewpoint.value = 'narrative';
@@ -1429,7 +1442,7 @@ function computeNarrativeCamera(t, outPos, outLook) {
   const scaled = Math.max(0, Math.min(0.9999, t)) * 4.0;
   const idx = Math.floor(scaled);
   const frac = scaled - idx;
-  const s = smoothstep(0.08, 0.92, frac);
+  const s = smoothstep(0.03, 0.97, frac);
 
   const stageA = NARRATIVE_STAGES[idx];
   const stageB = NARRATIVE_STAGES[Math.min(idx + 1, NARRATIVE_STAGES.length - 1)];
@@ -1460,22 +1473,19 @@ function animate() {
       state.pauseTimer -= dt;
     } else {
       const prevT = state.timeline;
-      state.timeline += dt * state.playSpeed;
+      // Modulate flight speed slightly so it glides gracefully through each keyframe
+      // without dead-stopping, keeping the forward flight continuous and dynamic!
+      const stagePhase = (state.timeline * 4.0) % 1.0;
+      const distFromKeyframe = Math.min(stagePhase, 1.0 - stagePhase);
+      const speedMod = 0.58 + 0.65 * smoothstep(0.0, 0.25, distFromKeyframe);
+      state.timeline += dt * state.playSpeed * speedMod * state.windSpeed;
 
-      // Pause briefly (1.4s) when crossing each keyframe (0.25, 0.50, 0.75, 1.00)
-      // so the viewer can clearly admire each of the 5 reference compositions!
-      const keyframes = [0.25, 0.50, 0.75, 1.00];
-      for (const kf of keyframes) {
-        if (prevT < kf && state.timeline >= kf) {
-          state.timeline = kf;
-          state.pauseTimer = 1.6;
-          break;
-        }
-      }
-
-      if (prevT === 1.00 && state.timeline > 1.00) {
+      if (prevT < 1.00 && state.timeline >= 1.00) {
+        state.timeline = 1.00;
+        state.pauseTimer = 1.4;
+      } else if (prevT === 1.00 && state.timeline > 1.00) {
         state.timeline = 0.00;
-        state.pauseTimer = 1.8;
+        state.pauseTimer = 0.8;
         // Snap camera back to Stage 0 cleanly on loop reset
         if (state.cameraMode === 'narrative') {
           camera.position.copy(NARRATIVE_STAGES[0].camPos);
