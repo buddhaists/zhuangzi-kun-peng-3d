@@ -2,6 +2,8 @@
 
 > 「北冥有魚，其名爲鯤。鯤之大，不知其幾千里也。化而爲鳥，其名爲鵬。鵬之背，不知其幾千里也；怒而飛，其翼若垂天之雲。」——《莊子‧逍遙遊》
 
+🌐 **線上展示網址（Live Demo）**：[https://buddhaists.github.io/zhuangzi-kun-peng-3d/](https://buddhaists.github.io/zhuangzi-kun-peng-3d/)
+
 以 **Three.js** 與 **自訂 WebGL GLSL Shader** 演繹八萬五千隻飛鳥於灰藍陰鬱天幕中凝聚成巨鯤、翻湧化為大鵬、雙翼展開如垂天之雲的五幕 3D 視覺震撼體驗。畫面嚴格考究野外紀錄片與鳥群自然聚散（Murmuration）的遠景長焦寫實質感。
 
 ---
