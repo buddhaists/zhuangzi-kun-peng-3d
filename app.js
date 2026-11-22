@@ -70,19 +70,16 @@ const NARRATIVE_STAGES = [
 
 const CAMERA_PRESETS = {
   pavilion: {
-    pos: new THREE.Vector3(0.0, 0.0, 82.0),
-    target: new THREE.Vector3(0.0, 0.0, 0.0),
-    snapT: 0.00
+    offsetPos: new THREE.Vector3(14.0, -3.5, 76.0),
+    offsetLook: new THREE.Vector3(-4.0, 0.5, 0.0)
   },
   telephoto: {
-    pos: new THREE.Vector3(-60.0, 0.0, 82.0),
-    target: new THREE.Vector3(-60.0, 0.0, 0.0),
-    snapT: 0.25
+    offsetPos: new THREE.Vector3(-6.0, 0.8, 52.0),
+    offsetLook: new THREE.Vector3(-12.0, 0.4, 0.0)
   },
   poles: {
-    pos: new THREE.Vector3(-240.0, 0.0, 82.0),
-    target: new THREE.Vector3(-240.0, 0.0, 0.0),
-    snapT: 1.00
+    offsetPos: new THREE.Vector3(12.0, -6.5, 68.0),
+    offsetLook: new THREE.Vector3(-2.0, 1.5, 0.0)
   }
 };
 
@@ -97,6 +94,7 @@ const state = {
   isPlaying: true,
   playSpeed: 0.032,       // Continuous forward flight speed across 0.00 -> 1.00
   pauseTimer: 0.6,        // Brief initial hold before continuous forward flight
+  flightOffset: 0.0,      // Continuous forward flight displacement (-X) even when hovering at a stage
   turbulence: 1.0,
   densityRatio: 1.0,
   windSpeed: 1.0,
@@ -134,14 +132,16 @@ camera.position.copy(NARRATIVE_STAGES[0].camPos);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
-controls.maxPolarAngle = Math.PI * 0.55;
-controls.minPolarAngle = Math.PI * 0.35;
-controls.minDistance = 30;
-controls.maxDistance = 180;
+controls.maxPolarAngle = Math.PI * 0.58;
+controls.minPolarAngle = Math.PI * 0.32;
+controls.minDistance = 28;
+controls.maxDistance = 160;
 controls.target.copy(NARRATIVE_STAGES[0].camLookAt);
 
+// When user drags to orbit, switch to free orbit mode around the moving Kun-Peng
+// (the camera still tracks the Kun-Peng's forward flight center so it never flies out of frame!)
 controls.addEventListener('start', () => {
-  if (state.cameraMode === 'narrative') {
+  if (state.cameraMode !== 'free') {
     const selectEl = document.getElementById('select-viewpoint');
     if (selectEl) {
       selectEl.value = 'free';
@@ -1404,14 +1404,14 @@ ui.sliderWind.addEventListener('input', (e) => {
 
 ui.selectViewpoint.addEventListener('change', (e) => {
   state.cameraMode = e.target.value;
-  if (CAMERA_PRESETS[state.cameraMode]) {
-    state.targetTimeline = CAMERA_PRESETS[state.cameraMode].snapT;
-  }
 });
 
 ui.btnCameraReset.addEventListener('click', () => {
   state.cameraMode = 'narrative';
   ui.selectViewpoint.value = 'narrative';
+  computeNarrativeCamera(state.timeline, tempCamPos, tempLookAt);
+  camera.position.copy(tempCamPos);
+  controls.target.copy(tempLookAt);
 });
 
 ui.btnAudioToggle.addEventListener('click', () => {
@@ -1451,19 +1451,38 @@ window.addEventListener('resize', () => {
 });
 
 // ============================================================================
-// 7. Synchronized 5-Stage Camera Interpolation & Animation Loop
+// 7. Synchronized 5-Stage Camera Tracking & Animation Loop
 // ============================================================================
 const tempCamPos = new THREE.Vector3();
 const tempLookAt = new THREE.Vector3();
+let lastFlockCenterX = 0.0;
+let lastFlockCenterY = 0.0;
 
 function smoothstep(edge0, edge1, x) {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
 }
 
-function computeNarrativeCamera(t, outPos, outLook) {
-  // Uses the exact same piecewise Hermite curve as the vertex shader so camera X
-  // stays 100% locked to the flock center across all 5 keyframes!
+// Compute the exact 3D centroid of the forward-flying Kun-Peng at timeline t
+// so the camera lens stays 100% focused on the Kun-Peng at all times!
+function computeFlockFocusCenter(t, elapsed) {
+  const scaled = Math.max(0, Math.min(0.9999, t)) * 4.0;
+  const idx = Math.floor(scaled);
+  const frac = scaled - idx;
+  const s = smoothstep(0.05, 0.95, frac);
+
+  // Exact X center matching the vertex shader's `centerX = -(seg + s) * 60.0`
+  const centerX = -(idx + s) * 60.0;
+  // Subtle vertical center tracking as the Kun transforms into the descending Peng wing
+  const stageY = [0.0, -0.4, -1.2, -1.8, -1.5];
+  const yA = stageY[idx] || 0.0;
+  const yB = stageY[Math.min(idx + 1, 4)] || 0.0;
+  const centerY = yA + (yB - yA) * s + Math.sin(elapsed * 1.4) * 0.15;
+
+  return { x: centerX, y: centerY };
+}
+
+function computeNarrativeCamera(t, outPos, outLook, elapsed = 0) {
   const scaled = Math.max(0, Math.min(0.9999, t)) * 4.0;
   const idx = Math.floor(scaled);
   const frac = scaled - idx;
@@ -1474,6 +1493,12 @@ function computeNarrativeCamera(t, outPos, outLook) {
 
   outPos.lerpVectors(stageA.camPos, stageB.camPos, s);
   outLook.lerpVectors(stageA.camLookAt, stageB.camLookAt, s);
+
+  // Subtle vertical focus tracking so the Kun-Peng body stays centered in the lens
+  const focus = computeFlockFocusCenter(t, elapsed);
+  outLook.x = focus.x;
+  outLook.y = focus.y * 0.45;
+  outPos.x = focus.x;
 }
 
 const clock = new THREE.Clock();
@@ -1490,7 +1515,7 @@ function animate() {
       state.timeline = state.targetTimeline;
       state.targetTimeline = null;
     } else {
-      state.timeline += diff * Math.min(1.0, dt * 5.0);
+      state.timeline += diff * Math.min(1.0, dt * 6.0);
     }
     updateStageUI(state.timeline);
   } else if (state.isPlaying) {
@@ -1502,16 +1527,19 @@ function animate() {
       // without dead-stopping, keeping the forward flight continuous and dynamic!
       const stagePhase = (state.timeline * 4.0) % 1.0;
       const distFromKeyframe = Math.min(stagePhase, 1.0 - stagePhase);
-      const speedMod = 0.58 + 0.65 * smoothstep(0.0, 0.25, distFromKeyframe);
+      const speedMod = 0.62 + 0.60 * smoothstep(0.0, 0.25, distFromKeyframe);
       state.timeline += dt * state.playSpeed * speedMod * state.windSpeed;
 
       if (prevT < 1.00 && state.timeline >= 1.00) {
         state.timeline = 1.00;
-        state.pauseTimer = 1.4;
+        state.pauseTimer = 1.2;
       } else if (prevT === 1.00 && state.timeline > 1.00) {
         state.timeline = 0.00;
-        state.pauseTimer = 0.8;
-        // Snap camera back to Stage 0 cleanly on loop reset
+        state.pauseTimer = 0.6;
+        // Snap camera and tracking reference cleanly on loop reset
+        const resetFocus = computeFlockFocusCenter(0.0, elapsed);
+        lastFlockCenterX = resetFocus.x;
+        lastFlockCenterY = resetFocus.y;
         if (state.cameraMode === 'narrative') {
           camera.position.copy(NARRATIVE_STAGES[0].camPos);
           controls.target.copy(NARRATIVE_STAGES[0].camLookAt);
@@ -1526,22 +1554,42 @@ function animate() {
   skyMaterial.uniforms.uTime.value = elapsed;
   skyMaterial.uniforms.uMorph.value = state.timeline;
 
-  const breathX = Math.sin(elapsed * 0.5) * 0.12;
-  const breathY = Math.cos(elapsed * 0.38) * 0.08;
+  // Compute current 3D focus point of the forward-flying Kun-Peng
+  const focus = computeFlockFocusCenter(state.timeline, elapsed);
+  const deltaFlockX = focus.x - lastFlockCenterX;
+  const deltaFlockY = focus.y - lastFlockCenterY;
+  lastFlockCenterX = focus.x;
+  lastFlockCenterY = focus.y;
+
+  const breathX = Math.sin(elapsed * 0.5) * 0.10;
+  const breathY = Math.cos(elapsed * 0.38) * 0.07;
 
   if (state.cameraMode === 'narrative') {
-    computeNarrativeCamera(state.timeline, tempCamPos, tempLookAt);
+    computeNarrativeCamera(state.timeline, tempCamPos, tempLookAt, elapsed);
     tempCamPos.x += breathX;
     tempCamPos.y += breathY;
-    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 6.0));
-    controls.target.lerp(tempLookAt, Math.min(1.0, dt * 6.0));
+    // Tightly lock horizontal X onto the flying Kun-Peng so it never drifts off-center,
+    // while smoothing Y and Z for cinematic documentary camera movement
+    camera.position.x = tempCamPos.x;
+    camera.position.y += (tempCamPos.y - camera.position.y) * Math.min(1.0, dt * 8.0);
+    camera.position.z += (tempCamPos.z - camera.position.z) * Math.min(1.0, dt * 8.0);
+    controls.target.x = tempLookAt.x;
+    controls.target.y += (tempLookAt.y - controls.target.y) * Math.min(1.0, dt * 8.0);
+    controls.target.z += (tempLookAt.z - controls.target.z) * Math.min(1.0, dt * 8.0);
   } else if (CAMERA_PRESETS[state.cameraMode]) {
+    // Follow the forward-flying Kun-Peng at the selected preset angle (pavilion, telephoto snout, or low-angle poles)
     const preset = CAMERA_PRESETS[state.cameraMode];
-    tempCamPos.copy(preset.pos);
-    tempCamPos.x += breathX;
-    tempCamPos.y += breathY;
-    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 4.5));
-    controls.target.lerp(preset.target, Math.min(1.0, dt * 4.5));
+    tempLookAt.set(focus.x + preset.offsetLook.x, focus.y * 0.5 + preset.offsetLook.y, preset.offsetLook.z);
+    tempCamPos.set(focus.x + preset.offsetPos.x + breathX, preset.offsetPos.y + breathY, preset.offsetPos.z);
+    camera.position.lerp(tempCamPos, Math.min(1.0, dt * 7.5));
+    controls.target.lerp(tempLookAt, Math.min(1.0, dt * 9.0));
+  } else {
+    // In 'free' 3D orbit mode, translate both camera and orbit target along with the Kun-Peng's forward flight
+    // so the user can freely rotate/zoom around the Kun-Peng while it flies forward!
+    camera.position.x += deltaFlockX;
+    camera.position.y += deltaFlockY * 0.4;
+    controls.target.x = focus.x;
+    controls.target.y = focus.y * 0.5;
   }
 
   controls.update();
