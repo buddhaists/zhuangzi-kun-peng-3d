@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《莊子‧逍遙遊》北冥有魚 — 鯤鵬化雲 WebGL 3D 群鳥動態藝術</title>
+  <meta name="description" content="以 Three.js 與 WebGL Custom Shaders 演繹《莊子‧逍遙遊》「北冥有魚，其名為鯤；化而為鳥，其名為鵬；怒而飛，其翼若垂天之雲」的八萬飛鳥聚散（Murmuration）3D 視覺體驗。" />
+  <link rel="stylesheet" href="./index.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./lib/three.module.min.js",
+        "three/addons/": "./lib/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="app-container">
+    <!-- WebGL 3D Canvas -->
+    <canvas id="webgl-canvas" aria-label="北冥有魚鯤鵬化雲 3D 飛鳥粒子動畫"></canvas>
+
+    <!-- Atmospheric Documentary Film Grain & Subtle Vignette Overlay -->
+    <div id="atmosphere-overlay" aria-hidden="true"></div>
+
+    <!-- Top Bar: Title, Telemetry & Controls -->
+    <header id="top-bar">
+      <div class="brand-lockup">
+        <span class="seal-stamp" aria-hidden="true">逍遙</span>
+        <div class="title-group">
+          <h1 id="main-title">《莊子‧逍遙遊》北冥有魚</h1>
+          <p class="subtitle">EIGHTY THOUSAND STARLINGS · WEBGL 3D MURMURATION</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div id="telemetry-readout" class="telemetry-pill" aria-live="polite">
+          <span class="dot-indicator"></span>
+          <span id="stage-label-short">壹 · 北冥潛鯤</span>
+          <span class="sep">|</span>
+          <span id="particle-count-readout">85,000 羽</span>
+        </div>
+
+        <button id="btn-camera-reset" class="icon-btn" type="button" title="重置最佳觀測視角 (Shortcut: R)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span>復位視角</span>
+        </button>
+
+        <button id="btn-audio-toggle" class="icon-btn" type="button" aria-pressed="false" title="開啟/關閉北冥風聲與群鳥振翅音場 (Shortcut: M)">
+          <svg id="icon-audio-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+          <svg id="icon-audio-on" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+          <span id="audio-label">環境音場：靜音</span>
+        </button>
+
+        <button id="btn-ui-collapse" class="icon-btn" type="button" title="隱藏/顯示控制介面以純粹賞析 (Shortcut: H)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="3" y1="15" x2="21" y2="15" />
+          </svg>
+          <span>純享畫面</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Classical Literary Vertical Typography Overlay -->
+    <aside id="poetry-panel" aria-label="莊子逍遙遊原文選段">
+      <div class="poetry-header-vertical">《莊子‧逍遙遊》</div>
+      <ol id="verse-list" class="verse-columns">
+        <li class="verse-column active" data-stage="0" tabindex="0" role="button" aria-label="第一幕：北冥有魚，其名爲鯤。">
+          <span class="verse-index">壹</span>
+          <span class="verse-text">北冥有魚，其名爲鯤。</span>
+        </li>
+        <li class="verse-column" data-stage="1" tabindex="0" role="button" aria-label="第二幕：鯤之大，不知其幾千里也。">
+          <span class="verse-index">貳</span>
+          <span class="verse-text">鯤之大，不知其幾千里也。</span>
+        </li>
+        <li class="verse-column" data-stage="2" tabindex="0" role="button" aria-label="第三幕：化而爲鳥，其名爲鵬。">
+          <span class="verse-index">叁</span>
+          <span class="verse-text">化而爲鳥，其名爲鵬。</span>
+        </li>
+        <li class="verse-column" data-stage="3" tabindex="0" role="button" aria-label="第四幕：鵬之背，不知其幾千里也；">
+          <span class="verse-index">肆</span>
+          <span class="verse-text">鵬之背，不知其幾千里也；</span>
+        </li>
+        <li class="verse-column" data-stage="4" tabindex="0" role="button" aria-label="第五幕：怒而飛，其翼若垂天之雲。">
+          <span class="verse-index">伍</span>
+          <span class="verse-text">怒而飛，其翼若垂天之雲。</span>
+        </li>
+      </ol>
+      <div id="verse-caption" class="verse-annotation">
+        遠海涼亭外，數萬飛鳥於灰藍冷冽天幕中凝聚成巨鯤之形，貼近海平線緩緩潛游。
+      </div>
+    </aside>
+
+    <!-- Bottom Interactive Director Control Bar -->
+    <footer id="director-bar" aria-label="五幕敘事時間軸與粒子流體控制">
+      <div class="timeline-row">
+        <button id="btn-play-pause" class="play-btn" type="button" aria-label="播放或暫停五幕自動敘事 (Shortcut: Space)">
+          <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
+          </svg>
+          <svg id="icon-play" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </button>
+
+        <div class="stage-stepper" role="tablist" aria-label="五幕章節快速切換">
+          <button class="stage-tab active" type="button" data-stage="0" role="tab" aria-selected="true">
+            <span class="tab-num">01</span>
+            <span class="tab-title">北冥有魚</span>
+          </button>
+          <button class="stage-tab" type="button" data-stage="1" role="tab" aria-selected="false">
+            <span class="tab-num">02</span>
+            <span class="tab-title">幾千里也</span>
+          </button>
+          <button class="stage-tab" type="button" data-stage="2" role="tab" aria-selected="false">
+            <span class="tab-num">03</span>
+            <span class="tab-title">化而爲鳥</span>
+          </button>
+          <button class="stage-tab" type="button" data-stage="3" role="tab" aria-selected="false">
+            <span class="tab-num">04</span>
+            <span class="tab-title">鵬之背</span>
+          </button>
+          <button class="stage-tab" type="button" data-stage="4" role="tab" aria-selected="false">
+            <span class="tab-num">05</span>
+            <span class="tab-title">垂天之雲</span>
+          </button>
+        </div>
+
+        <div class="scrub-container">
+          <label for="timeline-scrubber" class="sr-only">鯤鵬化雲進度軸</label>
+          <input id="timeline-scrubber" type="range" min="0" max="1" step="0.001" value="0.03" />
+          <div class="scrub-progress-track">
+            <div id="scrub-progress-fill" style="width: 3%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="control-item">
+          <label for="slider-turbulence">氣流渦旋 (Curl Turbulence)</label>
+          <input id="slider-turbulence" type="range" min="0.2" max="2.5" step="0.05" value="1.0" />
+          <span id="val-turbulence" class="control-val">1.00×</span>
+        </div>
+
+        <div class="control-item">
+          <label for="slider-density">群鳥凝密度 (Swarm Density)</label>
+          <input id="slider-density" type="range" min="0.3" max="1.0" step="0.05" value="1.0" />
+          <span id="val-density" class="control-val">85,000</span>
+        </div>
+
+        <div class="control-item">
+          <label for="slider-wind">蒼穹風速 (Wind Speed)</label>
+          <input id="slider-wind" type="range" min="0.3" max="2.4" step="0.05" value="1.0" />
+          <span id="val-wind" class="control-val">1.00×</span>
+        </div>
+
+        <div class="control-item">
+          <label for="select-viewpoint">觀測機位 (Camera Preset)</label>
+          <select id="select-viewpoint" class="viewpoint-select">
+            <option value="narrative">五幕自動敘事運鏡 (遠海涼亭 → 曠野電桿)</option>
+            <option value="pavilion">機位壹：觀海涼亭定點遠眺 (對應截圖 1)</option>
+            <option value="telephoto">機位貳：長焦特寫巨鯤首部 (對應截圖 2/3)</option>
+            <option value="poles">機位叁：曠野電線桿仰望大鵬 (對應截圖 4/5)</option>
+            <option value="free">自由 3D 軌道視角 (滑鼠拖曳 / 滾輪縮放)</option>
+          </select>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+.gemini/
+upload/
+.android/
+.gradle/
+.local/
+.npm/
+.bash*
+.profile
+.gitconfig
+*.log
+/*.png
